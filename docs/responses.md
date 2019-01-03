@@ -14,17 +14,19 @@
 
 ## Errors
 
-Responses that return  `400` error codes also include a body of the following format:
+Responses that return `400` error codes also include a body of the following format:
 
 ```json
 {
-    errors: [
-        {
-          type: "wrong_password",
-          message: "the password for the account is incorrect"
-        },
-        ...
-    ]
+  "errors": [
+    {
+      "type": "wrong_password",
+      "message": "the password for the account is incorrect"
+    },
+    {
+      "type": "already_registered_email",
+      "message": "the email is used by another account"
+    }
+  ]
 }
 ```
-
