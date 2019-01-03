@@ -1,5 +1,5 @@
 # Feeling API
 
-> API for Feeling
+> Internal REST API for Feeling
 
 📚 [Documentation](docs/main)
