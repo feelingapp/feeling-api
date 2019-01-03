@@ -2,4 +2,4 @@
 
 > Internal REST API for Feeling
 
-📚 [Documentation](docs/main)
+📚 [Documentation](docs/main.md)
