@@ -11,7 +11,7 @@ Settings are stored in the database for syncing between multiple devices.
 ```json
 {
   "daily_reminder": {
-    "enabled": True,
+    "enabled": true,
     "hour": 20,
     "minute": 0
   }
@@ -28,10 +28,10 @@ Settings are stored in the database for syncing between multiple devices.
 
 ### Example Request
 
-```json
+```javascript
 {
   "daily_reminder": {
-    "enabled": True, // Whether or not to send reminders to the user
+    "enabled": true, // Whether or not to send reminders to the user
     "hour": 22,
     "minute": 30
   }
