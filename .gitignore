@@ -10,5 +10,8 @@ pip-delete-this-directory.txt
 # Virtual Environment
 .env
 
+# JavaScript
+node_modules
+
 # macOS
 .DS_Store
