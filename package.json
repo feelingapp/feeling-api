@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/pavsidhu/feeling-api.git"
   },
+  "scripts": {
+    "develop": "sls offline start"
+  },
   "devDependencies": {
     "serverless-python-requirements": "^4.2.5",
     "serverless-wsgi": "^1.6.0"
