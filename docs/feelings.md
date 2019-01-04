@@ -14,17 +14,20 @@ Daily logs of the user's emotional state.
     {
       "emotion": "Amazing",
       "description": "...",
-      "hashtags": []
+      "hashtags": [],
+      "date": "2019-01-04T00:02:51"
     },
     {
       "emotion": "Unsure",
       "description": "...",
-      "hashtags": []
+      "hashtags": [],
+      "date": "2019-01-03T00:02:51"
     },
     {
       "emotion": "Great",
       "description": "...",
-      "hashtags": []
+      "hashtags": [],
+      "date": "2019-01-02T00:02:51"
     }
   ]
 }
@@ -66,7 +69,7 @@ Daily logs of the user's emotional state.
 
 ## Update a Feeling
 
-`PUT /feeling`
+`PUT /feeling/:id`
 
 | Parameter     | Type                 | Description                          |
 | ------------- | -------------------- | ------------------------------------ |
@@ -84,4 +87,4 @@ Daily logs of the user's emotional state.
 
 ## Delete a Feeling
 
-`DELETE /feeling`
+`DELETE /feeling/:id`
