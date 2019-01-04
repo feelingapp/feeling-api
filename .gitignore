@@ -16,6 +16,8 @@ node_modules
 # Serverless
 .serverless
 
-
 # macOS
 .DS_Store
+
+# VSCode
+.vscode
