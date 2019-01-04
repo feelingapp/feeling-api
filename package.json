@@ -11,7 +11,6 @@
     "develop": "sls offline start"
   },
   "devDependencies": {
-    "serverless-python-requirements": "^4.2.5",
-    "serverless-wsgi": "^1.6.0"
+    "serverless-python-requirements": "^4.2.5"
   }
 }
