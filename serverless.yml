@@ -1,0 +1,24 @@
+service: feeling-api
+
+plugins:
+  - serverless-offline-python
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: dev
+  region: eu-west-2
+
+functions:
+  app:
+    handler: src/app.app
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
