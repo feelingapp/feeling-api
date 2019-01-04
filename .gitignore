@@ -13,5 +13,9 @@ pip-delete-this-directory.txt
 # JavaScript
 node_modules
 
+# Serverless
+.serverless
+
+
 # macOS
 .DS_Store
