@@ -11,6 +11,7 @@
     "develop": "sls offline start"
   },
   "devDependencies": {
+    "serverless-offline-python": "^3.21.4",
     "serverless-python-requirements": "^4.2.5"
   }
 }
