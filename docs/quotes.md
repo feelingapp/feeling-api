@@ -1,8 +1,8 @@
 # Quotes
 
-## Get a random quote based on a feeling
+## Get a random quote based on an emotion
 
-`GET /quote/:feeling`
+`GET /quote/:emotion`
 
 ### Example Response
 
