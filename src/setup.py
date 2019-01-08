@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from models.User import User
+from models import Base
 
 # Set environment variables from .env
 load_dotenv()
@@ -13,12 +14,6 @@ load_dotenv()
 database_url = os.getenv("DATABASE_URL")
 database = create_engine(database_url)
 
-Session = sessionmaker(bind=database)
-
-session = Session()
-
-# TODO: Build databases
-
-session.close()
+Base.metadata.create_all(database)
 
 database.dispose()
