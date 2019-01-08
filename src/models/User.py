@@ -1,10 +1,10 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
 
-from models import Base, utcnow
+from models import BaseModel
 
 
-class User(Base):
+class User(BaseModel):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
@@ -12,11 +12,7 @@ class User(Base):
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False)
     password_hash = Column(String, nullable=False)
-    verified = Column(Boolean, nullable=False, default=False)
-    created_at = Column(DateTime(), nullable=False, server_default=utcnow())
-    updated_at = Column(
-        DateTime(), nullable=False, server_default=utcnow(), onupdate=utcnow()
-    )
+    verified = Column(Boolean, nullable=False, default=True)
 
     def __init__(self, first_name, last_name, email, password):
         self.first_name = first_name
