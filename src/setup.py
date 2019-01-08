@@ -14,6 +14,8 @@ load_dotenv()
 database_url = os.getenv("DATABASE_URL")
 database = create_engine(database_url)
 
+# Create tables if they do not exist
 Base.metadata.create_all(database)
 
+# Close connection
 database.dispose()
