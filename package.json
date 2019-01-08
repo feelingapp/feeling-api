@@ -9,7 +9,8 @@
   },
   "scripts": {
     "develop": "sls offline start",
-    "migrate": "alembic revision -m"
+    "migrate": "alembic revision -m",
+    "upgrade": "alembic upgrade"
   },
   "devDependencies": {
     "serverless-offline-python": "^3.21.4",
