@@ -7,7 +7,6 @@ from models import BaseModel
 class User(BaseModel):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False)

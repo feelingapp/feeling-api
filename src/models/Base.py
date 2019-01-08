@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import expression
@@ -23,6 +23,7 @@ class BaseModel(Base):
 
     __abstract__ = True
 
+    id = Column(Integer, primary_key=True)
     created_at = Column(DateTime(), nullable=False, server_default=utcnow())
     updated_at = Column(
         DateTime(), nullable=False, server_default=utcnow(), onupdate=utcnow()
