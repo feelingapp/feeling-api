@@ -12,16 +12,17 @@ class User(Base):
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False)
     password_hash = Column(String, nullable=False)
-    verified = Column(Boolean, nullable=False)
+    verified = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(), nullable=False, server_default=utcnow())
-    updated_at = Column(DateTime(), nullable=False, onupdate=utcnow())
+    updated_at = Column(
+        DateTime(), nullable=False, server_default=utcnow(), onupdate=utcnow()
+    )
 
     def __init__(self, first_name, last_name, email, password):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.password_hash = password
-        self.verified = False
 
     def __repr__(self):
         return "<User(id='{}', first_name='{}' last_name='{}', email='{}', password_hash='{}', verified='{}', created_at='{}', updated_at='{}')>".format(
