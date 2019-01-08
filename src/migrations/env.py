@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 # Fix import model issues
-sys.path.insert(0, os.getcwd())
+sys.path.insert(0, os.getcwd() + "/src")
 
 
 # Set environment variables from .env
