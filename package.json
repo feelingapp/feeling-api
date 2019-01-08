@@ -8,7 +8,8 @@
     "url": "git+https://github.com/pavsidhu/feeling-api.git"
   },
   "scripts": {
-    "develop": "sls offline start"
+    "develop": "sls offline start",
+    "migrate": "alembic revision -m"
   },
   "devDependencies": {
     "serverless-offline-python": "^3.21.4",
