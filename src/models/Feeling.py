@@ -8,7 +8,7 @@ class Feeling(BaseModel):
     __tablename__ = "feelings"
 
     emotion_id = Column(UUID, ForeignKey("emotions.id"), nullable=False)
-    description = Column(String, nullable=False)
+    description = Column(String)
     user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
 
     def __init__(self, emotion_id, description, user_id):
