@@ -15,5 +15,5 @@ class Emotion(BaseModel):
 
     def __repr__(self):
         return "<Emotion(id='{}', emotion='{}', emoji='{}', created_at='{}', updated_at='{}')>".format(
-            self.id, self.emotion, self.emoji
+            self.id, self.emotion, self.emoji, self.created_at, self.updated_at
         )
