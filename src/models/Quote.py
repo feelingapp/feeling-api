@@ -16,7 +16,7 @@ class Quote(BaseModel):
         self.emotion = emotion
 
     def __repr__(self):
-        return "<Quote(id='{}', first_name='{}' last_name='{}', email='{}', password_hash='{}', verified='{}', created_at='{}', updated_at='{}')>".format(
+        return "<Quote(id='{}', quote='{}', author='{}', emotion='{}', created_at='{}', updated_at='{}')>".format(
             self.id,
             self.quote,
             self.author,
