@@ -9,7 +9,7 @@ class Quote(BaseModel):
 
     quote = Column(String, nullable=False)
     author = Column(String, nullable=False)
-    emotion_id = Column(UUID, ForeignKey("users.id"), nullable=False)
+    emotion_id = Column(UUID, ForeignKey("emotions.id"), nullable=False)
 
     def __init__(self, quote, author, emotion):
         self.quote = quote
