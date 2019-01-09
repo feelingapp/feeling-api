@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, String
+from sqlalchemy import Column, String, ForeignKey
 
 from models import BaseModel
 
@@ -8,7 +8,7 @@ class Quote(BaseModel):
 
     quote = Column(String, nullable=False)
     author = Column(String, nullable=False)
-    emotion = Column(String, nullable=False)
+    emotion = Column(String, ForeignKey("users.id"), nullable=False)
 
     def __init__(self, quote, author, emotion):
         self.quote = quote
