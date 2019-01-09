@@ -1,4 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.dialects.postgresql import UUID
 
 from models import BaseModel
 
@@ -6,8 +7,8 @@ from models import BaseModel
 class FeelingHashtag(BaseModel):
     __tablename__ = "feeling_hashtags"
 
-    feeling_id = Column(Integer, ForeignKey("feeling.id"), nullable=False)
-    hashtag_id = Column(Integer, ForeignKey("hashtag.id"), nullable=False)
+    feeling_id = Column(UUID, ForeignKey("feelings.id"), nullable=False)
+    hashtag_id = Column(UUID, ForeignKey("hashtags.id"), nullable=False)
 
     def __init__(self, feeling_id, hashtag_id):
         self.feeling_id = feeling_id

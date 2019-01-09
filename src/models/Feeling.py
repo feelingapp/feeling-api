@@ -1,4 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.dialects.postgresql import UUID
 
 from models import BaseModel
 
@@ -6,9 +7,9 @@ from models import BaseModel
 class Feeling(BaseModel):
     __tablename__ = "feelings"
 
-    emotion_id = Column(Integer, ForeignKey("emotions.id"), nullable=False)
+    emotion_id = Column(UUID, ForeignKey("emotions.id"), nullable=False)
     description = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
 
     def __init__(self, emotion_id, description, user_id):
         self.emotion_id = emotion_id
