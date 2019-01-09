@@ -1,5 +1,6 @@
 from models.Base import Base, BaseModel
 from models.User import User
+from models.Feeling import Feeling
 from models.Hashtag import Hashtag
 from models.FeelingHashtag import FeelingHashtag
 from models.Quote import Quote
