@@ -19,7 +19,7 @@ class User(BaseModel):
         self.password_hash = password
 
     def __repr__(self):
-        return "<User(id='{}', first_name='{}' last_name='{}', email='{}', password_hash='{}', verified='{}', created_at='{}', updated_at='{}')>".format(
+        return "<User(id='{}', first_name='{}', last_name='{}', email='{}', password_hash='{}', verified='{}', created_at='{}', updated_at='{}')>".format(
             self.id,
             self.first_name,
             self.last_name,
