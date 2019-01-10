@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, DateTime, Integer
+from sqlalchemy import Column, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
