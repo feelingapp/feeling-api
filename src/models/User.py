@@ -12,7 +12,7 @@ class User(BaseModel):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False)
-    password_hash = Column(String, nullable=False)
+    password_hash = Column(String)
     verified = Column(Boolean, nullable=False, default=False)
 
     def __init__(self, first_name, last_name, email, password):
