@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 def database(function):
     """Decorator to help connect to a database"""
 
-    def wrap_function(*args, **kwargs):
+    def wrap_function(*args):
         # Set environment variables from .env
         load_dotenv()
 
@@ -22,7 +22,7 @@ def database(function):
         session = Session()
 
         # Call function
-        response = function(session, *args, **kwargs)
+        response = function(*args, session)
 
         # Close database connection
         engine.dispose()
