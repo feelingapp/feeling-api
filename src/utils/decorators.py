@@ -45,7 +45,8 @@ def validate(schema):
 
     def decorator(function):
         def wrap_function(*args):
-            body = json.loads(args[0]["body"])
+            event = args[0]
+            body = json.loads(event["body"])
 
             # Create JSON schema validator
             validator = Draft4Validator(schema)
@@ -64,8 +65,34 @@ def validate(schema):
                 return {"statusCode": 400, "body": {"errors": errors}}
 
             # Call function
-            return function(*args, errors)
+            return function(*args)
 
         return wrap_function
 
     return decorator
+
+
+def token_required(function):
+    """Decorator handle access tokens"""
+
+    def wrap_function(*args):
+        event = args[0]
+        headers = event["headers"]
+
+        print(event)
+
+        authorization = headers.get("Authorization")
+
+        if authorization:
+            token = authorization.split("Bearer ")[0]
+
+            # TODO: parse token
+            user_id = None
+
+            # Add user ID to event argument
+            args = ({**event, "user_id": user_id}, *event[1:])
+
+        # Call function
+        return function(*args)
+
+    return wrap_function
