@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 
-from models import BaseModel
+from src.models import BaseModel
 
 
 class FeelingHashtag(BaseModel):

@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, String
 from argon2 import PasswordHasher
 
-from models import BaseModel
+from src.models import BaseModel
 
 password_hasher = PasswordHasher()
 

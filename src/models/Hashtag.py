@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String
 
-from models import BaseModel
+from src.models import BaseModel
 
 
 class Hashtag(BaseModel):
