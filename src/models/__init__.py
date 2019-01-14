@@ -9,3 +9,4 @@ from models.SocialProvider import SocialProvider
 from models.Emotion import Emotion
 from models.RefreshToken import RefreshToken
 from models.Client import Client
+from models.Settings import Settings
