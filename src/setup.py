@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-from models import Base
+from src.models import Base
 
 # Set environment variables from .env
 load_dotenv()
