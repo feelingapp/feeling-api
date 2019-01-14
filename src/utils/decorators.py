@@ -86,13 +86,17 @@ def token_required(function):
         if authorization:
             token = authorization.split("Bearer ")[0]
 
+            # TODO: check if token is expired
+
             # TODO: parse token
             user_id = None
 
             # Add user ID to event argument
             args = ({**event, "user_id": user_id}, *event[1:])
 
-        # Call function
-        return function(*args)
+            # Call function
+            return function(*args)
+
+        return {"statusCode": 401}
 
     return wrap_function
