@@ -79,8 +79,6 @@ def token_required(function):
         event = args[0]
         headers = event["headers"]
 
-        print(event)
-
         authorization = headers.get("Authorization")
 
         if authorization:
@@ -92,7 +90,8 @@ def token_required(function):
             user_id = None
 
             # Add user ID to event argument
-            args = ({**event, "user_id": user_id}, *event[1:])
+            new_event = {**event, "user_id": user_id}
+            args = (new_event, *args[1:])
 
             # Call function
             return function(*args)
