@@ -1,3 +1,5 @@
+import json
+
 from src.models import Settings, User
 from src.utils.decorators import database, token_required, validate
 
@@ -10,6 +12,20 @@ schema = {
         }
     },
 }
+
+
+@database
+@token_required
+def get(event, context, session):
+    user_id = event["user_id"]
+
+    # Fetch settings by user ID from the database
+    settings = session.query(Settings).filter_by(user_id=user_id).first()
+
+    return {
+        "statusCode": 200,
+        "body": {"settings": json.loads(settings.settings) if settings else None},
+    }
 
 
 @database
