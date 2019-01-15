@@ -15,13 +15,13 @@ schema = {
 @database
 @token_required
 @validate(schema)
-def settings(event, context, session):
+def put(event, context, session):
     body = event["body"]
     user_id = event["user_id"]
 
     # Update settings in database
-    user_settings = Settings(user_id, body)
-    session.add(user_settings)
+    settings = Settings(user_id, body)
+    session.add(settings)
     session.commit()
 
     return {"statusCode": 200}

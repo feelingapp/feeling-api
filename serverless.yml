@@ -15,10 +15,11 @@ provider:
   region: eu-west-2
 
 functions:
-  app:
-    handler: src/functions/settings.settings
+  put_settings:
+    handler: src/functions/settings.put
     events:
       - http:
           path: /settings
-          method: post
+          method: put
+          cors: true
           cors: true
