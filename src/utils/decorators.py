@@ -82,7 +82,7 @@ def token_required(function):
         authorization = headers.get("Authorization")
 
         if authorization:
-            token = authorization.split("Bearer ")[0]
+            token = authorization.split("Bearer ")[1]
 
             # TODO: check if token is expired
 
