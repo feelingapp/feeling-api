@@ -16,9 +16,9 @@ provider:
 
 functions:
   app:
-    handler: src/app.app
+    handler: src/functions/settings.settings
     events:
       - http:
-          path: /
-          method: get
+          path: /settings
+          method: post
           cors: true
