@@ -22,4 +22,10 @@ functions:
           path: /settings
           method: put
           cors: true
+  get_settings:
+    handler: src/functions/settings.get
+    events:
+      - http:
+          path: /settings
+          method: get
           cors: true
