@@ -28,6 +28,7 @@ def database(function):
         response = function(*args, session)
 
         # Close database connection
+        session.close()
         engine.dispose()
 
         return response
