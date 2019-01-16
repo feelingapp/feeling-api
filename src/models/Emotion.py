@@ -7,13 +7,11 @@ class Emotion(BaseModel):
     __tablename__ = "emotions"
 
     emotion = Column(String, nullable=False)
-    emoji = Column(String, nullable=False)
 
-    def __init__(self, emotion, emoji):
+    def __init__(self, emotion):
         self.emotion = emotion
-        self.emoji = emoji
 
     def __repr__(self):
-        return "<Emotion(id='{}', emotion='{}', emoji='{}', created_at='{}', updated_at='{}')>".format(
-            self.id, self.emotion, self.emoji, self.created_at, self.updated_at
+        return "<Emotion(id='{}', emotion='{}', created_at='{}', updated_at='{}')>".format(
+            self.id, self.emotion, self.created_at, self.updated_at
         )
