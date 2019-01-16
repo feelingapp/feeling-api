@@ -1,7 +1,7 @@
 import json
 
 from src.models import Settings
-from utils.decorators import database, token_required, validate
+from src.utils.decorators import database, token_required, validate
 
 schema = {
     "type": "object",
