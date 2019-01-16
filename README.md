@@ -24,7 +24,7 @@ npm install
 3. Generate the tables (make sure PostgreSQL is running):
 
 ```bash
-python3 src/setup.py
+python -m src.setup
 ```
 
 4. To run the functions locally:
