@@ -7,3 +7,12 @@ class Emotion(Enum):
     UNSURE = 3
     ANGRY = 4
     UPSET = 5
+
+    @staticmethod
+    def getId(name):
+        """Get an emotion's ID given a name"""
+
+        try:
+            return Emotion[name.upper()].value
+        except:
+            return None
