@@ -1,20 +1,25 @@
-from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 
+from src.consts import Emotion
 from src.models import BaseModel
 
 
 class Feeling(BaseModel):
     __tablename__ = "feelings"
 
-    emotion_id = Column(UUID, ForeignKey("emotions.id"), nullable=False)
+    emotion_id = Column(Integer, ForeignKey("emotions.id"), nullable=False)
     description = Column(String)
     user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
 
-    def __init__(self, emotion_id, description, user_id):
-        self.emotion_id = emotion_id
+    def __init__(self, emotion: Emotion, description, user_id):
+        self.emotion_id = emotion.value
         self.description = description
         self.user_id = user_id
+
+    @property
+    def emotion(self):
+        return Emotion(self.emotion_id)
 
     def __repr__(self):
         return "<Feeling(id='{}', emotion_id='{}', description='{}', user_id='{}', created_at='{}', updated_at='{}')>".format(
