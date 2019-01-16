@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer
 
 from src.models import BaseModel
 
@@ -6,6 +6,7 @@ from src.models import BaseModel
 class Emotion(BaseModel):
     __tablename__ = "emotions"
 
+    id = Column(Integer, primary_key=True)
     emotion = Column(String, nullable=False)
 
     def __init__(self, emotion):
