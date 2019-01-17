@@ -15,6 +15,13 @@ provider:
   region: eu-west-2
 
 functions:
+  get_feeling:
+    handler: src/functions/feeling.get
+    events:
+      - http:
+          path: /feeling/{id}
+          method: get
+          cors: true
   put_settings:
     handler: src/functions/settings.put
     events:
