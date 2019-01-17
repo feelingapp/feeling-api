@@ -16,3 +16,16 @@ def get(event, context, session):
         return {"statusCode": 404}
 
     return {"statusCode": 200, "body": feeling.toJson()}
+
+
+@database
+@token_required
+def delete(event, context, session):
+    feeling_id = event["pathParameters"]["id"]
+    user_id = event["user_id"]
+
+    # Delete feeling by ID
+    session.query(Feeling).filter_by(id=feeling_id, user_id=user_id).delete()
+    session.commit()
+
+    return {"statusCode": 200}
