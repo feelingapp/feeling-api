@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from src.consts import Emotion
 from src.models import BaseModel
@@ -11,6 +12,7 @@ class Feeling(BaseModel):
     emotion_id = Column(Integer, ForeignKey("emotions.id"), nullable=False)
     description = Column(String)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    hashtags = relationship("Hashtag", secondary="feeling_hashtags", backref="feelings")
 
     def __init__(self, emotion: Emotion, description, user_id):
         self.emotion_id = emotion.value
