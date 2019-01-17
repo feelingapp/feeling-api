@@ -7,8 +7,8 @@ from src.models import BaseModel
 class Social(BaseModel):
     __tablename__ = "socials"
 
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
-    provider_id = Column(UUID, ForeignKey("social_providers.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    provider_id = Column(UUID(as_uuid=True), ForeignKey("social_providers.id"), nullable=False)
     social_id = Column(Integer, nullable=False)
 
     def __init__(self, user_id, provider_id, social_id):

@@ -7,7 +7,7 @@ from src.models import BaseModel
 class Settings(BaseModel):
     __tablename__ = "settings"
 
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     settings = Column(JSONB, nullable=False)
 
     def __init__(self, user_id, settings):

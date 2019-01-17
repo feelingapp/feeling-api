@@ -10,7 +10,7 @@ class Feeling(BaseModel):
 
     emotion_id = Column(Integer, ForeignKey("emotions.id"), nullable=False)
     description = Column(String)
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
 
     def __init__(self, emotion: Emotion, description, user_id):
         self.emotion_id = emotion.value

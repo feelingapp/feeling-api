@@ -8,8 +8,8 @@ class RefreshToken(BaseModel):
     __tablename__ = "refresh_token"
 
     token_hash = Column(String, nullable=False)
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
-    client_id = Column(UUID, ForeignKey("clients.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
 
     def __init__(self, token_hash, user_id, client_id):
         self.token_hash = token_hash
