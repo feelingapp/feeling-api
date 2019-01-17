@@ -16,3 +16,9 @@ class Emotion(Enum):
             return Emotion[name.upper()].value
         except:
             return None
+
+    @staticmethod
+    def list():
+        """Returns a list of all the emotions"""
+
+        return [emotion.name for emotion in list(Emotion)]
