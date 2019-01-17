@@ -32,4 +32,4 @@ def get(event, context, session):
     if not quote:
         return {"statusCode": 404}
 
-    return {"statusCode": 200, "body": {"quote": quote.quote, "author": quote.author}}
+    return {"statusCode": 200, "body": quote.toJson()}

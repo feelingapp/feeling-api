@@ -20,6 +20,13 @@ class Quote(BaseModel):
     def emotion(self):
         return Emotion(self.emotion_id)
 
+    def toJson(self):
+        return {
+            "quote": self.quote,
+            "author": self.author,
+            "emotion": self.emotion.name,
+        }
+
     def __repr__(self):
         return "<Quote(id='{}', quote='{}', author='{}', emotion='{}', created_at='{}', updated_at='{}')>".format(
             self.id,
