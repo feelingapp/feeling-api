@@ -22,6 +22,15 @@ functions:
           path: /feeling/{id}
           method: get
           cors: true
+
+  create_feeling:
+    handler: src/functions/feeling.post
+    events:
+      - http:
+          path: /feeling
+          method: post
+          cors: true
+
   delete_feeling:
     handler: src/functions/feeling.delete
     events:
@@ -29,6 +38,7 @@ functions:
           path: /feeling/{id}
           method: delete
           cors: true
+
   put_settings:
     handler: src/functions/settings.put
     events:
@@ -36,6 +46,7 @@ functions:
           path: /settings
           method: put
           cors: true
+
   get_settings:
     handler: src/functions/settings.get
     events:
