@@ -1,6 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
-from sqlalchemy.orm import relationship
 
 from src.consts import Emotion
 from src.models import BaseModel

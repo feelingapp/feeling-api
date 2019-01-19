@@ -62,3 +62,10 @@ functions:
           path: /settings
           method: get
           cors: true
+  get_quote:
+    handler: src/functions/quote.get
+    events:
+      - http:
+          path: /quote/{emotion}
+          method: get
+          cors: true
