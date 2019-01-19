@@ -22,10 +22,10 @@ def get(event, context, session):
     # Fetch settings by user ID from the database
     settings = session.query(Settings).filter_by(user_id=user_id).first()
 
-    return {
-        "statusCode": 200,
-        "body": {"settings": json.loads(settings.settings) if settings else None},
-    }
+    if not settings:
+        return {"statusCode": 404}
+
+    return {"statusCode": 200, "body": json.loads(settings.settings)}
 
 
 @database
