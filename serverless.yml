@@ -31,6 +31,14 @@ functions:
           method: post
           cors: true
 
+  update_feeling:
+    handler: src/functions/feeling.put
+    events:
+      - http:
+          path: /feeling/{id}
+          method: put
+          cors: true
+
   delete_feeling:
     handler: src/functions/feeling.delete
     events:

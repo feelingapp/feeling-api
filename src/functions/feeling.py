@@ -51,7 +51,22 @@ def post(event, context, session):
     return {"statusCode": 200}
 
 
-    session.commit()
+@database
+@token_required
+@validate(schema)
+def put(event, context, session):
+    body = json.loads(event["body"])
+
+    feeling_id = event["pathParameters"]["id"]
+    user_id = event["user_id"]
+
+    feeling = session.query(Feeling).filter_by(id=feeling_id, user_id=user_id).first()
+
+    if feeling:
+        feeling.set_emotion(body["emotion"])
+        feeling.description = body.get("description")
+        feeling.hashtags = body.get("hashtags")
+        session.commit()
 
     return {"statusCode": 200}
 

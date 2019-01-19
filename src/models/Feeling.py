@@ -24,6 +24,9 @@ class Feeling(BaseModel):
     def emotion(self):
         return Emotion(self.emotion_id)
 
+    def set_emotion(self, emotion):
+        self.emotion_id = Emotion[emotion].value
+
     def toJson(self):
         return {
             "id": str(self.id),
