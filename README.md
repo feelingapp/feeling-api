@@ -6,6 +6,12 @@
 
 ## How To Use
 
+1. Make sure Postgres is running with the uuid-ossp extension. Run the following on your Postgres server to install the extension:
+
+```sql
+CREATE EXTENSION "uuid-ossp";
+```
+
 1. Install Python libraries:
 
 ```bash
@@ -21,7 +27,7 @@ npm install -g serverless
 npm install
 ```
 
-3. Generate the tables (make sure PostgreSQL is running):
+3. Generate the tables:
 
 ```bash
 python -m src.setup
