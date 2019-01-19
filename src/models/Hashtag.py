@@ -6,7 +6,7 @@ from src.models import BaseModel
 class Hashtag(BaseModel):
     __tablename__ = "hashtags"
 
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
 
     def __init__(self, name):
         self.name = name
