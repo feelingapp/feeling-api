@@ -62,11 +62,13 @@ def put(event, context, session):
 
     feeling = session.query(Feeling).filter_by(id=feeling_id, user_id=user_id).first()
 
-    if feeling:
-        feeling.set_emotion(body["emotion"])
-        feeling.description = body.get("description")
-        feeling.hashtags = body.get("hashtags")
-        session.commit()
+    if not feeling:
+        return {"statusCode": 404}
+
+    feeling.set_emotion(body["emotion"])
+    feeling.description = body.get("description")
+    feeling.hashtags = body.get("hashtags")
+    session.commit()
 
     return {"statusCode": 200}
 
