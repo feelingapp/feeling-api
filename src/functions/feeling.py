@@ -1,7 +1,7 @@
 import json
 
 from src.consts import Emotion
-from src.models import Feeling, Hashtag
+from src.models import Feeling
 from src.utils.decorators import database, token_required, validate
 
 schema = {
@@ -36,20 +36,21 @@ def get(event, context, session):
 @validate(schema)
 def post(event, context, session):
     body = json.loads(event["body"])
+
+    # Get feeling properties
+    emotion = Emotion[body["emotion"]]
+    description = body.get("description")
+    hashtags = body.get("hashtags")
     user_id = event["user_id"]
 
     # Create a new feeling in the database
-    emotion = Emotion[body["emotion"]]
-    description = body["description"]
-    feeling = Feeling(emotion, description, user_id)
-
-    # If hashtags, add them to the database
-    if body.get("hashtags"):
-        for name in body["hashtags"]:
-            hashtag = Hashtag(name)
-            feeling.hashtags.append(hashtag)
-
+    feeling = Feeling(emotion, description, hashtags, user_id)
     session.add(feeling)
+    session.commit()
+
+    return {"statusCode": 200}
+
+
     session.commit()
 
     return {"statusCode": 200}
