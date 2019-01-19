@@ -12,7 +12,7 @@
 CREATE EXTENSION "uuid-ossp";
 ```
 
-1. Install Python libraries:
+2. Install Python libraries:
 
 ```bash
 python3 -m venv venv
@@ -20,20 +20,20 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-2. Install JavaScript libraries:
+3. Install JavaScript libraries:
 
 ```bash
 npm install -g serverless
 npm install
 ```
 
-3. Generate the tables:
+4. Generate the tables:
 
 ```bash
 python -m src.setup
 ```
 
-4. To run the functions locally:
+5. To run the functions locally:
 
 ```bash
 npm run develop
