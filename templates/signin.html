@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feeling</title>
+</head>
+<body>
+    <form method="post">
+    First name:<br>
+    <input type="text" name="username"><br>
+    Last name:<br>
+    <input type="password" name="password"><br>
+    <input type="hidden" name="redirect_uri" value="{{ params.redirect_uri }}"}>
+    <input type="hidden" name="code_challenge_method" value="{{ params.code_challenge_method }}"}>
+    <input type="hidden" name="code_challenge" value="{{ params.code_challenge }}"}>
+    <input type="hidden" name="state" value="{{ params.state }}"}>
+    <input type="submit" value="Submit">
+
+    </form>
+</body>
+</html>

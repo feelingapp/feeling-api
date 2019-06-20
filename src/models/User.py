@@ -1,6 +1,5 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from argon2 import PasswordHasher
-
 from models import BaseModel
 
 password_hasher = PasswordHasher()
@@ -42,3 +41,4 @@ class User(BaseModel):
             self.created_at,
             self.updated_at,
         )
+

@@ -12,6 +12,6 @@ class Client(BaseModel):
         self.name = name
 
     def __repr__(self):
-        return "<Clients(id='{}', name='{}', created_at='{}', updated_at='{}')>".format(
+        return "<Client(id='{}', name='{}', created_at='{}', updated_at='{}')>".format(
             self.id, self.name, self.created_at, self.updated_at
         )
