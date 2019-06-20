@@ -1,5 +1,7 @@
 from jinja2 import Environment, FileSystemLoader
 from src.jinjaobjects.params import params
+from src.utils.decorators import database, validate
+from src.models.Client import Client
 
 STATE_LENGTH = 10
 
@@ -19,22 +21,22 @@ schema = {
 
 # needs to validate the request
 # this potentially causes issues as it allows anyone to insert as much as they want into the database
-
-def authorize(event, context):
+@database
+@validate(schema)
+def authorize(event, context, session):
     # event is type dictionary
-    # the parameters are spliced to remove the double quotes
     client_parameters = event['queryStringParameters']
-    client_id = client_parameters['client_id'][1:-1]
-    response_type = client_parameters['response_type'][1:-1]
-    redirect_uri = client_parameters['redirect_uri'][1:-1]
-    code_challenge_method = client_parameters['code_challenge_method'][1:-1]
-    code_challenge = client_parameters['code_challenge'][1:-1]
-    state = client_parameters['state'][1:-1]
+    client_id = client_parameters['client_id']
+    response_type = client_parameters['response_type']
+    redirect_uri = client_parameters['redirect_uri']
+    code_challenge_method = client_parameters['code_challenge_method']
+    code_challenge = client_parameters['code_challenge']
+    state = client_parameters['state']
 
     # TODO: check whether it's best to insert a URL regex for each client_id into the database to get cleaner code
-    # if not verify_client_id_URI(client_id,redirect_uri, session):
-        # TODO: insert an error message
-        # return {"statusCode": 400}
+    if not verify_client_id_URI(client_id,redirect_uri, session):
+        # TODO: check the statusCode of the error message
+        return {"statusCode": 400, "body":{"error":"the client ID is not valid"}}
 
     # if there are other response types in future then there should be code added here
     if response_type != "code":
@@ -67,10 +69,10 @@ def authorize(event, context):
 # TODO verify URI
 def verify_client_id_URI(id, uri, session):
     clients = session.query(Client.id == id)
-    if len(clients) == 0:
-        return False
-    else:
+    if clients:
         return True
+    else:
+        return False
 
 
 

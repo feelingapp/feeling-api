@@ -1,6 +1,7 @@
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, ForeignKey, Integer
 from sqlalchemy.ext.compiler import compiles
 from models import BaseModel
+from sqlalchemy.sql import expression
 import secrets
 
 
@@ -17,7 +18,7 @@ def pg_utcnow(element, compiler, **kw):
 class AuthorizationCode(BaseModel):
     __tablename__ = "emotions"
 
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     authorization_code = Column(String, nullable=False)
     code_challenge_method = Column(String, nullable=False)
     code_challenge = Column(String, nullable=False)
@@ -36,6 +37,7 @@ class AuthorizationCode(BaseModel):
             self.id, self.emotion, self.emoji, self.created_at, self.updated_at
         )
 
+    # TODO: double check secrets is a safe enough library
     def generate_auth_code(self):
         len_code = 40
         code = ''.join(secrets.choice(String.ascii_letters + String.digits) for _ in range(len_code))
