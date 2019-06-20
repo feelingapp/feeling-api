@@ -6,7 +6,13 @@
 
 ## How To Use
 
-1. Install Python libraries:
+1. Make sure Postgres is running with the uuid-ossp extension. Run the following on your Postgres server to install the extension:
+
+```sql
+CREATE EXTENSION "uuid-ossp";
+```
+
+2. Install Python libraries:
 
 ```bash
 python3 -m venv venv
@@ -14,20 +20,20 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-2. Install JavaScript libraries:
+3. Install JavaScript libraries:
 
 ```bash
 npm install -g serverless
 npm install
 ```
 
-3. Generate the tables (make sure PostgreSQL is running):
+4. Generate the tables:
 
 ```bash
-python3 src/setup.py
+python -m src.setup
 ```
 
-4. To run the functions locally:
+5. To run the functions locally:
 
 ```bash
 npm run develop

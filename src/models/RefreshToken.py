@@ -1,7 +1,8 @@
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from argon2 import PasswordHasher
-from models import BaseModel
+
+from src.models import BaseModel
 
 password_hasher = PasswordHasher()
 
@@ -9,8 +10,8 @@ class RefreshToken(BaseModel):
     __tablename__ = "refresh_token"
 
     token_hash = Column(String, nullable=False)
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
-    client_id = Column(UUID, ForeignKey("clients.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
 
     def __init__(self, token, user_id, client_id):
         self.token_hash = self.hash_token(token)

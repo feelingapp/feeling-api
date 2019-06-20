@@ -15,11 +15,58 @@ provider:
   region: eu-west-2
 
 functions:
-  app:
-    handler: src/functions/app.app
+  get_feeling:
+    handler: src/functions/feeling.get
     events:
       - http:
-          path: /
+          path: /feeling/{id}
+          method: get
+          cors: true
+
+  create_feeling:
+    handler: src/functions/feeling.post
+    events:
+      - http:
+          path: /feeling
+          method: post
+          cors: true
+
+  update_feeling:
+    handler: src/functions/feeling.put
+    events:
+      - http:
+          path: /feeling/{id}
+          method: put
+          cors: true
+
+  delete_feeling:
+    handler: src/functions/feeling.delete
+    events:
+      - http:
+          path: /feeling/{id}
+          method: delete
+          cors: true
+
+  put_settings:
+    handler: src/functions/settings.put
+    events:
+      - http:
+          path: /settings
+          method: put
+          cors: true
+
+  get_settings:
+    handler: src/functions/settings.get
+    events:
+      - http:
+          path: /settings
+          method: get
+          cors: true
+  get_quote:
+    handler: src/functions/quote.get
+    events:
+      - http:
+          path: /quote/{emotion}
           method: get
           cors: true
 

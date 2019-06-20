@@ -1,11 +1,10 @@
-from models.Base import Base, BaseModel
-from models.User import User
-from models.Feeling import Feeling
-from models.Hashtag import Hashtag
-from models.FeelingHashtag import FeelingHashtag
-from models.Quote import Quote
-from models.Social import Social
-from models.SocialProvider import SocialProvider
-from models.Emotion import Emotion
-from models.RefreshToken import RefreshToken
-from models.Client import Client
+from src.models.Base import Base, BaseModel
+from src.models.User import User
+from src.models.Feeling import Feeling
+from src.models.Quote import Quote
+from src.models.Social import Social
+from src.models.SocialProvider import SocialProvider
+from src.models.Emotion import Emotion
+from src.models.RefreshToken import RefreshToken
+from src.models.Client import Client
+from src.models.Settings import Settings

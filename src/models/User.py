@@ -1,6 +1,7 @@
-from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy import Boolean, Column, String
 from argon2 import PasswordHasher
-from models import BaseModel
+
+from src.models import BaseModel
 
 password_hasher = PasswordHasher()
 
@@ -11,7 +12,7 @@ class User(BaseModel):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False)
-    password_hash = Column(String, nullable=False)
+    password_hash = Column(String)
     verified = Column(Boolean, nullable=False, default=False)
 
     def __init__(self, first_name, last_name, email, password):
