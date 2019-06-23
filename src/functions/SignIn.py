@@ -3,12 +3,31 @@ from jinja2 import Environment, FileSystemLoader
 from src.models import User
 from src.models.AuthorizationCode import AuthorizationCode
 from src.utils.decorators import database, validate
-# need to do the same checking as before for the parameters
+#TODO: need to do the same checking as before for the parameters
+
+STATE_LENGTH=10
+
+
+body_schema = {
+    "type": "object",
+    "properties": {
+        "email": {"type": "string"},
+        "password": {"type": "string"},
+        "redirect_uri" : {"type": "string"},
+        "code_challenge_method" : {"type": "string"},
+        "code_challenge" : {"type": "string"},
+        "state": {"type": "string", "minLength": STATE_LENGTH, "maxLength":STATE_LENGTH}
+    },
+    "required": ["client_id", "response_type", "redirect_uri",
+                 "code_challenge_method", "code_challenge", "state"]
+
+}
+
+@validate(body_sc=body_schema)
 @database
 def sign_in(event, context,session):
     post_body = parse.parse_qs(event["body"])
     # TODO: validate post_body using a schema
-    parse.un
 
     email = post_body["email"][0]
     password = post_body["password"][0]
@@ -26,7 +45,7 @@ def sign_in(event, context,session):
         # TODO: use the right statuscode
         return {"statusCode": 400, "error": "email or password is incorrect"}
 
-    code = AuthorizationCode(user.id,code_challenge_method, code_challenge)
+    code = AuthorizationCode(user.id,code_challenge_method, code_challenge, redirect_uri)
 
     session.add(code)
     session.commit()

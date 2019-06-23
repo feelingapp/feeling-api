@@ -33,7 +33,7 @@ def get(event, context, session):
 
 @database
 @token_required
-@validate(schema)
+@validate(body_sc=schema)
 def post(event, context, session):
     body = json.loads(event["body"])
 
@@ -53,7 +53,7 @@ def post(event, context, session):
 
 @database
 @token_required
-@validate(schema)
+@validate(body_sc=schema)
 def put(event, context, session):
     body = json.loads(event["body"])
 

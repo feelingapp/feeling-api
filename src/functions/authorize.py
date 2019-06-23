@@ -6,23 +6,31 @@ from src.models.Client import Client
 STATE_LENGTH = 10
 
 # TODO: use regex to check response_type, code_challenge_method
-schema = {
+header_schema = {
     "type": "object",
     "properties": {
-        "client_id": {"type": "string"},
-        "response_type": {"type": "string"},
-        "redirect_uri" : {"type": "string"},
-        "code_challenge_method" : {"type": "string"},
-        "code_challenge" : {"type": "string"},
-        "state": {"type": "string", "minLength": STATE_LENGTH, "maxLength":STATE_LENGTH}
-    },
-    "required": ["client_id", "response_type", "redirect_uri", "code_challenge_method", "code_challemge", "state", "temp_id"],
+        "queryStringParameters" : {
+            "type": "object",
+            "properties" : {
+                "client_id": {"type": "string"},
+                "response_type": {"type": "string"},
+                "redirect_uri" : {"type": "string"},
+                "code_challenge_method" : {"type": "string"},
+                "code_challenge" : {"type": "string"},
+                "state": {"type": "string", "minLength": STATE_LENGTH, "maxLength":STATE_LENGTH}
+            },
+            "required": ["client_id", "response_type", "redirect_uri",
+                         "code_challenge_method", "code_challenge", "state"]
+
+        }
+    }
+
 }
 
 # needs to validate the request
 # this potentially causes issues as it allows anyone to insert as much as they want into the database
 @database
-@validate(schema)
+@validate(header_sc=header_schema)
 def authorize(event, context, session):
     # event is type dictionary
     client_parameters = event['queryStringParameters']
@@ -32,6 +40,14 @@ def authorize(event, context, session):
     code_challenge_method = client_parameters['code_challenge_method']
     code_challenge = client_parameters['code_challenge']
     state = client_parameters['state']
+
+
+    print(client_id)
+    print(response_type)
+    print(redirect_uri)
+    print(code_challenge_method)
+    print(code_challenge)
+    print(state)
 
     # TODO: check whether it's best to insert a URL regex for each client_id into the database to get cleaner code
     if not verify_client_id_URI(client_id,redirect_uri, session):

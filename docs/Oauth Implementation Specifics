@@ -18,12 +18,14 @@
 ## access tokens
 | Implementation                | Reason        |
 |----------------               |--------       |
-|access from an IP distant from the previous known IPs should require a new authorisation code and the distant IP will not be able to use the access_token| to make it harder for an attacker to hijack refresh_tokens
+|access from an IP distant from the previous known IPs should require a new authorisation code and the distant IP will not be able to use the access_token| to make it harder for an attacker to hijack refresh_tokens|
+
 
 ## state
 | Implementation | Reason|
 |-----           |-----  |
 |the state parameter will be sent to the website for the website to send back | this is so we can associate the state parameter with the code challenge  |
+|the length will be 10 characters long| to prevent anyone from brute forcing the state parameter
 
 ## code challenge
 | Implementation | Reason|
