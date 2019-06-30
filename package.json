@@ -10,7 +10,9 @@
   "scripts": {
     "develop": "sls offline start",
     "migrate": "alembic revision -m",
-    "upgrade": "alembic upgrade"
+    "upgrade": "alembic upgrade",
+    "start-database": "docker-compose up -d",
+    "stop-database": "docker-compose down"
   },
   "devDependencies": {
     "serverless-offline-python": "^3.21.4",

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  database:
+    image: "fintrace/postgres-uuid"
+    container_name: "feeling-database"
+    environment:
+      - POSTGRES_DB=feeling
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=
+    ports:
+      - "5432:5432"
