@@ -11,6 +11,7 @@
     "develop": "sls offline start",
     "migrate": "alembic revision -m",
     "upgrade": "alembic upgrade",
+    "setup": "python -m src.setup",
     "start-database": "docker-compose up -d",
     "stop-database": "docker-compose down"
   },
