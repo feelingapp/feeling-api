@@ -74,7 +74,7 @@ def validate(schema):
 
 
 def token_required(function):
-    """Decorator handle access tokens"""
+    """Decorator to handle access tokens"""
 
     def wrap_function(*args):
         event = args[0]

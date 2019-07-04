@@ -7,3 +7,4 @@ python-dotenv==0.10.1
 alembic==1.0.5
 argon2-cffi==18.3.0
 jsonschema==2.6.0
+requests==2.22.0

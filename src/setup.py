@@ -17,7 +17,7 @@ database = create_engine(database_url)
 # Create tables if they do not exist
 Base.metadata.create_all(database)
 
-# create a Session
+# Create a Session
 Session = sessionmaker(bind=database)
 session = Session()
 
