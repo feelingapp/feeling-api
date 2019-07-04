@@ -47,12 +47,12 @@ functions:
           method: delete
           cors: true
 
-  put_settings:
-    handler: src/functions/settings.put
+  post_settings:
+    handler: src/functions/settings.post
     events:
       - http:
           path: /settings
-          method: put
+          method: post
           cors: true
 
   get_settings:
