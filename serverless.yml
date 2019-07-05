@@ -11,8 +11,9 @@ custom:
 provider:
   name: aws
   runtime: python3.6
-  stage: dev
-  region: eu-west-2
+  stage: ${env:STAGE}
+  region: ${env:AWS_REGION}
+  profile: feeling
 
 functions:
   get_feeling:

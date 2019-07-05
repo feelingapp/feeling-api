@@ -8,10 +8,12 @@
     "url": "git+https://github.com/pavsidhu/feeling-api.git"
   },
   "scripts": {
-    "develop": "sls offline start",
+    "develop": "serverless offline start",
     "migrate": "alembic revision -m",
     "upgrade": "alembic upgrade",
     "setup": "python -m src.setup",
+    "deploy-development": "serverless deploy",
+    "deploy-production": "serverless deploy --env production",
     "start-database": "docker-compose up -d",
     "stop-database": "docker-compose down"
   },
