@@ -19,7 +19,7 @@ class RefreshToken(BaseModel):
         self.client_id = client_id
 
     def __repr__(self):
-        return "<RefreshToken(id='{}', token_hash='{}', user_id='{}', client_id='{}', created_at='{}', updated_at='{}')>".format(
+        return "<RefreshToken(id='{}', token_hash='{}', user_id='{}', client_id='{}', valid_at='{}', expires_at='{}' created_at='{}', updated_at='{}')>".format(
             self.id,
             self.token_hash,
             self.user_id,
@@ -34,6 +34,6 @@ class RefreshToken(BaseModel):
         return password_hasher.hash(token)
 
     def verify_token(self, token):
-        """Checks if a password matches with a hash"""
+        """Checks if a token matches with a hash"""
 
         return password_hasher.verify(self.token_hash, token)

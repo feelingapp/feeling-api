@@ -11,7 +11,7 @@ from src.consts import Emotion
 load_dotenv()
 
 # Connect to database
-database_url = os.getenv("DATABASE_URL")
+database_url = os.environ["DATABASE_URL"]
 database = create_engine(database_url)
 
 # Create tables if they do not exist
@@ -20,7 +20,6 @@ Base.metadata.create_all(database)
 # create a Session
 Session = sessionmaker(bind=database)
 session = Session()
-
 
 # Add emotions to Emotion table
 for emotion in Emotion:

@@ -8,3 +8,4 @@ from src.models.Emotion import Emotion
 from src.models.RefreshToken import RefreshToken
 from src.models.Client import Client
 from src.models.Settings import Settings
+from src.models.AuthorizationCode import AuthorizationCode

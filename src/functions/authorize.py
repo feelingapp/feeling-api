@@ -1,4 +1,5 @@
 from jinja2 import Environment, FileSystemLoader
+import re
 from src.jinjaobjects.params import params
 from src.utils.decorators import database, validate
 from src.models.Client import Client
@@ -27,6 +28,7 @@ header_schema = {
 
 }
 
+
 # needs to validate the request
 # this potentially causes issues as it allows anyone to insert as much as they want into the database
 @database
@@ -41,23 +43,17 @@ def authorize(event, context, session):
     code_challenge = client_parameters['code_challenge']
     state = client_parameters['state']
 
+    # verifying the client_id exists
+    clients = session.query(Client).filter(Client.id == id)
+    if not clients.all():
+        return {"statusCode": 403, "body":{"error":"the client ID is not valid"}}
 
-    print(client_id)
-    print(response_type)
-    print(redirect_uri)
-    print(code_challenge_method)
-    print(code_challenge)
-    print(state)
+    client = clients.one()
 
-    # TODO: check whether it's best to insert a URL regex for each client_id into the database to get cleaner code
-    if not verify_client_id_URI(client_id,redirect_uri, session):
+
+    if not verify_URI(client,redirect_uri):
         # TODO: check the statusCode of the error message
-        return {"statusCode": 400, "body":{"error":"the client ID is not valid"}}
-
-    # if there are other response types in future then there should be code added here
-    if response_type != "code":
-        # TODO: check the statusCode for the error message
-        return {"statusCode":400, "body":{"error":"only authorisation code grant flow is supported at this time"}}
+        return {"statusCode": 403, "body":{"error":"the redirect_uri is not valid"}}
 
 
     j2_env = Environment(loader=FileSystemLoader("templates"),
@@ -81,14 +77,13 @@ def authorize(event, context, session):
 
 
 
-
-# TODO verify URI
-def verify_client_id_URI(id, uri, session):
-    clients = session.query(Client.id == id)
-    if clients:
-        return True
+def verify_URI(client, uri):
+    pattern = re.compile(client.redirect_rgx)
+    if pattern.match(uri):
+        return False;
     else:
-        return False
+        return True
+
 
 
 

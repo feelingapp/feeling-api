@@ -79,7 +79,7 @@ functions:
           cors: true
 
   siginin:
-    handler: src/functions/SignIn.sign_in
+    handler: src/functions/sign_in.sign_in
     events:
     - http:
         path: /authorize

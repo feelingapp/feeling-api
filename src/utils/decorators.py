@@ -57,13 +57,10 @@ def validate(header_sc=None, body_sc=None):
                 try:
                     jsonschema.validate(event,header_sc)
                 except jsonschema.exceptions.ValidationError as e:
-                    print(e.message)
                     return {"statusCode": 400, "body": {"error": e.message}}
 
             if body_sc and event["body"]:
-                print(event["body"])
 
-                print(parse_parameters(event["body"]))
                 body = parse_parameters(event["body"])
                 # Create JSON schema validator
                 # TODO: check specifications on each of the validators and why to use them
@@ -80,7 +77,6 @@ def validate(header_sc=None, body_sc=None):
 
                 # Return error to client if body is invalid
                 if errors:
-                    print("there was an error in validation")
                     return {"statusCode": 400, "body": {"errors": errors}}
 
             # Call function
