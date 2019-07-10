@@ -16,6 +16,6 @@ def exists(event, context, session):
 
     # Search for a user with a verified email
     email = event["queryStringParameters"]["email"]
-    user = session.query(User).filter_by(email=email, verified=True).first()
+    user = session.query(User).filter_by(email=email.lower(), verified=True).first()
 
     return {"statusCode": 200, "body": {"exists": user != None}}
