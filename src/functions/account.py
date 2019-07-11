@@ -18,4 +18,10 @@ def exists(event, context, session):
     email = event["queryStringParameters"]["email"]
     user = session.query(User).filter_by(email=email.lower(), verified=True).first()
 
-    return {"statusCode": 200, "body": {"exists": user != None}}
+    return {
+        "statusCode": 200,
+        "body": {
+            "exists": user != None,
+            "first_name": user.first_name if user != None else None,
+        },
+    }
