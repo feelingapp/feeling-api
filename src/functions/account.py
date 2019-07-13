@@ -6,7 +6,6 @@ from src.utils.decorators import database, token_required, validate
 
 @database
 def exists(event, context, session):
-    print(event)
     # Make sure email is in the query string parameters
     if (
         not event["queryStringParameters"]
