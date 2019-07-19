@@ -7,8 +7,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.consts import Emotion, User
-from src.generate_data import generate_data
-from src.models import Base, Emotion as EmotionTable
+from src.models import Base
+from src.models import Emotion as EmotionTable
 
 # Set environment variables from .env
 load_dotenv()
