@@ -7,4 +7,5 @@ class params:
         self.redirect_uri = None
         self.code_challenge_method = None
         self.code_challenge = None
+        self.code_challenge_token = None
         self.state = None

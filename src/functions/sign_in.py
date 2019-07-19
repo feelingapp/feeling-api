@@ -1,5 +1,7 @@
 import re
 from urllib import parse
+
+import jwt
 from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.orm import mapper
 from urllib.parse import urlencode
@@ -11,7 +13,7 @@ from models import Client
 from src.models import User
 from src.models.AuthorizationCode import AuthorizationCode
 from src.utils.decorators import database, validate, parse_parameters
-
+from src.functions.authorize import AUTH_PRIVATE_KEY
 # DEBUGGING LIBRARIES
 import inspect
 
@@ -45,7 +47,16 @@ def sign_in(event, context,session):
     redirect_uri = post_body["redirect_uri"]
     code_challenge_method = post_body["code_challenge_method"]
     code_challenge = post_body["code_challenge"]
+    code_challenge_token = post_body["code_challenge_token"]
 
+    try:
+        token_payload = jwt.decode(code_challenge_token,AUTH_PRIVATE_KEY, algorithms=['HS256'])
+    #     TODO: add extra catches for different token errors
+    except jwt.exceptions.InvalidSignatureError as e:
+        return {"statusCode": 403, "message": "invalid code_challenge_token"}
+
+    if token_payload["code_challenge"] == code_challenge:
+        return {"statusCode": 403, "message": "code_challenge_token doe not match code_challenge"}
 
     clients = session.query(Client).filter(Client.id == client_id)
     if not clients.all():
@@ -55,7 +66,6 @@ def sign_in(event, context,session):
 
     if not verify_URI(client, redirect_uri):
         return {"statusCode":403, "message":"client_id or redirect_uri is incorrect"}
-
 
     #TODO: need to guarantee python has not got strange string comparison stuff like javascript
     users = session.query(User).filter(User.email == email)

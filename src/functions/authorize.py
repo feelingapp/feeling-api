@@ -1,3 +1,4 @@
+import jwt
 from jinja2 import Environment, FileSystemLoader
 import re
 from src.jinjaobjects.params import params
@@ -5,6 +6,8 @@ from src.utils.decorators import database, validate
 from src.models.Client import Client
 
 STATE_LENGTH = 10
+
+AUTH_PRIVATE_KEY = "secret_boi"
 
 # TODO: use regex to check response_type, code_challenge_method
 header_schema = {
@@ -27,6 +30,17 @@ header_schema = {
     }
 
 }
+
+
+# call /authorize with code_challenge
+# infected browser then receives code_challenge in form hidden
+# malware changes the code_challenge to seomthing it knows
+# the user signs in and the browser gets given the auth_code
+# the malware in the browser is now the only one to be able to use that auth_code as it knows the code_challenge
+
+
+# call /authorize with code_challenge
+# infected browser then receives code_challenge which is signed
 
 
 # needs to validate the request
@@ -59,10 +73,17 @@ def authorize(event, context, session):
     j2_env = Environment(loader=FileSystemLoader("templates"),
                          trim_blocks=True)
 
+
+    # TODO: add an expiry time to the code_challenge tokens
+    token_payload = {"code_challenge":code_challenge}
+
+    token = jwt.encode(token_payload, AUTH_PRIVATE_KEY, algorithm='HS256').decode('utf-8')
+
     parameters = params()
     parameters.redirect_uri = redirect_uri
     parameters.response_type = response_type
     parameters.code_challenge_method = code_challenge_method
+    parameters.code_challenge_token = token
     parameters.code_challenge = code_challenge
     parameters.client_id = client_id
     parameters.state = state
