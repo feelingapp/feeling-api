@@ -37,3 +37,14 @@ def test_get_a_quote(base_url, token, quote):
 
     assert response.status_code == 200
     assert json["emotion"].lower() == emotion
+
+
+def test_get_a_quote_with_unknown_emotion(base_url, token, quote):
+    """Attempt to fetch a quote but emotion is not valid"""
+
+    emotion = "meh"
+
+    url = f"{base_url}/quote/{emotion}"
+    response = requests.get(url)
+
+    assert response.status_code == 400
