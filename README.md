@@ -30,13 +30,21 @@ pip install -r requirements.txt
 4. Generate the database tables:
 
 ```bash
-python -m src.setup
+python -m src.setup --generate-data
 ```
+
+Note: `--generate-data` prepopulates the database with mock data.
 
 5. To run the functions locally:
 
 ```bash
 npm run develop
+```
+
+6. To stop the database when you're finished:
+
+```bash
+npm run stop-database
 ```
 
 6. To stop the database when you're finished:
