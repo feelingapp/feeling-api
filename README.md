@@ -33,7 +33,7 @@ pip install -r requirements.txt
 python -m src.setup --generate-data
 ```
 
-`--generate-data` prepopulates the database with mock data.
+Note: `--generate-data` prepopulates the database with mock data.
 
 5. To run the functions locally:
 
