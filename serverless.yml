@@ -47,12 +47,12 @@ functions:
           method: delete
           cors: true
 
-  put_settings:
-    handler: src/functions/settings.put
+  post_settings:
+    handler: src/functions/settings.post
     events:
       - http:
           path: /settings
-          method: put
+          method: post
           cors: true
 
   get_settings:
@@ -62,6 +62,7 @@ functions:
           path: /settings
           method: get
           cors: true
+
   get_quote:
     handler: src/functions/quote.get
     events:
@@ -86,7 +87,10 @@ functions:
         method: POST
         cors: false
 
-
-
-
-
+  account_exists:
+    handler: src/functions/account.exists
+    events:
+      - http:
+          path: /account/exists
+          method: get
+          cors: true

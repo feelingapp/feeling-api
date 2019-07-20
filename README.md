@@ -6,13 +6,20 @@
 
 ## How To Use
 
-1. Make sure Postgres is running with the uuid-ossp extension. Run the following on your Postgres server to install the extension:
+1. Make sure you have Docker running. To start the database:
 
-```sql
-CREATE EXTENSION "uuid-ossp";
+```bash
+npm run start-database
 ```
 
-2. Install Python libraries:
+2. Install JavaScript libraries:
+
+```bash
+npm install -g serverless
+npm install
+```
+
+3. Install Python libraries:
 
 ```bash
 python3 -m venv venv
@@ -20,21 +27,28 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Install JavaScript libraries:
+4. Generate the database tables:
 
 ```bash
-npm install -g serverless
-npm install
+python -m src.setup --generate-data
 ```
 
-4. Generate the tables:
-
-```bash
-python -m src.setup
-```
+Note: `--generate-data` prepopulates the database with mock data.
 
 5. To run the functions locally:
 
 ```bash
 npm run develop
+```
+
+6. To stop the database when you're finished:
+
+```bash
+npm run stop-database
+```
+
+6. To stop the database when you're finished:
+
+```bash
+npm run stop-database
 ```

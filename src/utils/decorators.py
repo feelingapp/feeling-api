@@ -88,7 +88,7 @@ def validate(header_sc=None, body_sc=None):
 
 
 def token_required(function):
-    """Decorator handle access tokens"""
+    """Decorator to handle access tokens"""
 
     def wrap_function(*args):
         event = args[0]
