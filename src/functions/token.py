@@ -71,7 +71,7 @@ def auth_code_flow(event, session):
     session.add(db_refresh_token)
     session.commit()
 
-    return {"statusCode": 200, "body": {"token": jwtoken}}
+    return {"statusCode": 200, "body": {"token": jwtoken, "refresh_token": refresh_token}}
 
 
 refresh_schema = {}
