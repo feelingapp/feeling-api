@@ -30,8 +30,8 @@ def pg_utcnow(element, compiler, **kw):
 class AuthorizationCode(BaseModel):
     __tablename__ = "authorization_codes"
 
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False, unique=True)
-    client_id = Column(UUID, ForeignKey("clients.id"), nullable=False, unique=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, unique=True)
+    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False, unique=False)
     authorization_code = Column(String, nullable=False, unique=True)
     code_challenge_method = Column(String, nullable=False)
     code_challenge = Column(String, nullable=False)
@@ -60,10 +60,11 @@ class AuthorizationCode(BaseModel):
 
     def verify_code_challenge(self, verifier):
         # TODO: find a way to clean this up
-        if self.code_challenge_method == "S256":
+        if self.code_challenge_method == "SHA256":
             # TODO: test and verify this is the right way to do this
-            hashed_obj = sha256(verifier)
+            hashed_obj = sha256(bytes(verifier,'utf-8'))
             b64encoded_string = b64encode(hashed_obj.digest()).decode(encoding="UTF-8")
+            print(b64encoded_string)
             if b64encoded_string == self.code_challenge:
                 return True
             else:

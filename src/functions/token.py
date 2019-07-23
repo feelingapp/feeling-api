@@ -1,13 +1,13 @@
 import string
 
-from models.AuthorizationCode import AuthorizationCode
-from models import RefreshToken
+from src.models.AuthorizationCode import AuthorizationCode
+from src.models import RefreshToken
 from datetime import datetime, timedelta
 import secrets
 import jwt
 
 # take this from a file after testing
-from utils.decorators import database, validate, parse_parameters
+from src.utils.decorators import database, validate, parse_parameters
 
 PRIVATE_KEY = "privatekey"
 
@@ -18,7 +18,7 @@ schema = {}
 @database
 def token(event, context, session):
 
-    client_parameters = event['queryStringParameters']
+    client_parameters = parse_parameters(event['body'])
     grant_type = client_parameters['grant_type']
     if grant_type == "authorization_code":
         return auth_code_flow(event, session)
@@ -48,7 +48,7 @@ def auth_code_flow(event, session):
 
     db_code = db_codes.one()
 
-    if not client_id == db_code.client_id:
+    if not client_id == str(db_code.client_id):
         return {"statusCode":403, "error": "incorrect client ID"}
 
     if not redirect_uri == db_code.redirect_uri:
@@ -60,7 +60,7 @@ def auth_code_flow(event, session):
     # TODO: find a correct format and type for expiry_time
     expiry_time = "in 30 mins"
 
-    payload = {"user_id" : db_code.user_id, "expiry_time" : expiry_time}
+    payload = {"user_id" : str(db_code.user_id), "expiry_time" : str(expiry_time)}
 
     jwtoken = jwt.encode(payload, PRIVATE_KEY, algorithm='HS256').decode('utf-8')
 

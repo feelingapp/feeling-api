@@ -94,3 +94,11 @@ functions:
           path: /account/exists
           method: get
           cors: true
+
+  token:
+    handler: src/functions/token.token
+    events:
+      - http:
+          path: /token
+          method: post
+          cors: true

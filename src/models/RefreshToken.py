@@ -3,11 +3,13 @@ from sqlalchemy.dialects.postgresql import UUID
 from argon2 import PasswordHasher
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import expression
+from hashlib import sha256
 
 from src.models import BaseModel
 
 # TODO: find somewhere to put this constant
 # (14 DAYS IN MINUTES)
+SECRET_SALT = "ASECRETBOI"
 REFRESH_TOKEN_LIFE = "20160"
 TOKEN_LIFE = "30"
 
@@ -38,7 +40,7 @@ class RefreshToken(BaseModel):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
     # TODO: make sure nothing needs to be done with creation order
-    valid_at = Column(Column(DateTime(), nullable=False, server_default=utc_valid_at()))
+    valid_at = Column(DateTime(), nullable=False, server_default=utc_valid_at())
     expires_at = Column(DateTime(), nullable=False, server_default=utc_expires_at())
 
     # TODO: confirm valid_at and and expires_at don't need to be put in here
@@ -59,14 +61,16 @@ class RefreshToken(BaseModel):
             self.updated_at,
         )
 
+    # TODO: verify that this is correct
     def hash_token(self, token):
-        """Uses Argon2id to generate a password hash"""
 
         # TODO: use another hasher with salt because this won't work as there is nothing to identify the record with
-        # e.g. if a user has a token how would he find it in the database
-        return password_hasher.hash(token)
+        # e.g. if a user has a token how would he find it in the
+
+        salted_string = SECRET_SALT + token
+        return sha256(bytes(salted_string,'utf-8')).hexdigest()
 
     def verify_token(self, token):
         """Checks if a token matches with a hash"""
 
-        return password_hasher.verify(self.token_hash, token)
+        return self.token_hash == self.hash_token(token)

@@ -1,3 +1,4 @@
+import json
 import re
 from urllib import parse
 
@@ -7,9 +8,7 @@ from sqlalchemy.orm import mapper
 from urllib.parse import urlencode
 from validators import url
 
-
-
-from models import Client
+from src.models import Client
 from src.models import User
 from src.models.AuthorizationCode import AuthorizationCode
 from src.utils.decorators import database, validate, parse_parameters
@@ -40,7 +39,6 @@ body_schema = {
 @database
 def sign_in(event, context,session):
     post_body = parse_parameters(event["body"])
-
     email = post_body["email"]
     password = post_body["password"]
     client_id = post_body["client_id"]
@@ -55,7 +53,7 @@ def sign_in(event, context,session):
     except jwt.exceptions.InvalidSignatureError as e:
         return {"statusCode": 403, "message": "invalid code_challenge_token"}
 
-    if token_payload["code_challenge"] == code_challenge:
+    if not token_payload["code_challenge"] == code_challenge:
         return {"statusCode": 403, "message": "code_challenge_token doe not match code_challenge"}
 
     clients = session.query(Client).filter(Client.id == client_id)
@@ -64,7 +62,7 @@ def sign_in(event, context,session):
 
     client = clients.one()
 
-    if not verify_URI(client, redirect_uri):
+    if not client.verify_URI(redirect_uri):
         return {"statusCode":403, "message":"client_id or redirect_uri is incorrect"}
 
     #TODO: need to guarantee python has not got strange string comparison stuff like javascript
@@ -78,8 +76,13 @@ def sign_in(event, context,session):
     if not user.verify_password(password):
         return {"statusCode": 403, "message": "email or password is incorrect"}
 
+    # in the case of a client already having an authorization code the previous authorization code is discarded and a
+    # new one is created
+    user_owned_code = session.query(AuthorizationCode).filter(AuthorizationCode.user_id == user.id)
+    if user_owned_code.count():
+        session.delete(user_owned_code.one())
 
-    code = AuthorizationCode(user.id, code_challenge_method, code_challenge, redirect_uri)
+    code = AuthorizationCode(user.id, client_id, code_challenge_method, code_challenge, redirect_uri)
 
     # this is to stop possible DoS attacks if they find an exploit in the authorization codes which
     # would cause the below loop to loop forever, however that is very unlikely
@@ -111,13 +114,6 @@ def sign_in(event, context,session):
     return {"statusCode": 201, "headers": {"Content-Type": "text/html"},"body":webpage}
 
 
-# TODO: this is a copy of a function in authorize find a better place to put it
-def verify_URI(client, uri):
-    pattern = re.compile(client.redirect_rgx)
-    if pattern.match(uri):
-        return False;
-    else:
-        return True
 
 # Only to be run after everything has been validated by the client
 # this function removes any previous codes the user had

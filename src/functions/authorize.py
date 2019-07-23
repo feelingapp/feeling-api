@@ -9,6 +9,8 @@ STATE_LENGTH = 10
 
 AUTH_PRIVATE_KEY = "secret_boi"
 
+CODE_CHALLENGE_METHODS = ["SHA256"]
+
 # TODO: use regex to check response_type, code_challenge_method
 header_schema = {
     "type": "object",
@@ -57,15 +59,23 @@ def authorize(event, context, session):
     code_challenge = client_parameters['code_challenge']
     state = client_parameters['state']
 
+    # TODO: use the correct statusCode and check it's the response_type value
+    if response_type != "authorization_code":
+        return {"statusCode": 403, "error":{"only authorization_code flow is supported at the current time"}}
+
+    # TODO: use the correct statusCode
+    if code_challenge_method not in CODE_CHALLENGE_METHODS:
+        return {"statusCode": 403, "body":{"error":"the code challenge method is not supported by our API; currently "
+                                                   "only SHA256 is"}}
+
     # verifying the client_id exists
-    clients = session.query(Client).filter(Client.id == id)
-    if not clients.all():
+    clients = session.query(Client).filter(Client.id == client_id)
+    if not clients.count():
         return {"statusCode": 403, "body":{"error":"the client ID is not valid"}}
 
     client = clients.one()
 
-
-    if not verify_URI(client,redirect_uri):
+    if not client.verify_URI(redirect_uri):
         # TODO: check the statusCode of the error message
         return {"statusCode": 403, "body":{"error":"the redirect_uri is not valid"}}
 
@@ -97,13 +107,6 @@ def authorize(event, context, session):
     return {"statusCode":200, "headers": {"Content-Type": "text/html"},"body":webpage}
 
 
-
-def verify_URI(client, uri):
-    pattern = re.compile(client.redirect_rgx)
-    if pattern.match(uri):
-        return False;
-    else:
-        return True
 
 
 

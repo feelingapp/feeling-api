@@ -1,3 +1,5 @@
+import re
+
 from sqlalchemy import Column, String
 
 from src.models import BaseModel
@@ -17,3 +19,13 @@ class Client(BaseModel):
         return "<Client(id='{}', name='{}', redirect_rgx='{}' created_at='{}', updated_at='{}')>".format(
             self.id, self.name, self.redirect_rgx, self.created_at, self.updated_at
         )
+
+    def verify_URI(self, uri):
+        print(self.redirect_rgx)
+        print(uri)
+        pattern = re.compile(self.redirect_rgx)
+        if pattern.match(uri):
+            return True
+        else:
+            return False
+

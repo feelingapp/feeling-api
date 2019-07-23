@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from models import Client
 from src.consts import Emotion
 from src.models import Base, User, Emotion as EmotionTable
 
@@ -14,6 +15,7 @@ load_dotenv()
 
 # Connect to database
 database_url = os.environ["DATABASE_URL"]
+print(database_url)
 database = create_engine(database_url)
 
 # Create tables if they do not exist
@@ -32,7 +34,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "--generate-data":
     # Read the mock users file and add the users to the database
     with open("src/data/users.json", "r") as file:
         mock_users = json.load(file)
-
         for mock_user in mock_users:
             user = User(
                 mock_user["first_name"],
@@ -42,6 +43,9 @@ if len(sys.argv) > 1 and sys.argv[1] == "--generate-data":
             )
             user.verified = mock_user["verified"]
             session.add(user)
+
+    client = Client("Android app", "*")
+    session.add(client)
 
 # Finish and close session
 session.commit()
