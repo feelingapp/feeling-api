@@ -6,9 +6,8 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import Client
 from src.consts import Emotion
-from src.models import Base, User, Emotion as EmotionTable
+from src.models import Base, User, Client, Emotion as EmotionTable
 
 # Set environment variables from .env
 load_dotenv()
@@ -34,6 +33,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "--generate-data":
     # Read the mock users file and add the users to the database
     with open("src/data/users.json", "r") as file:
         mock_users = json.load(file)
+
         for mock_user in mock_users:
             user = User(
                 mock_user["first_name"],

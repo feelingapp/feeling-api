@@ -31,13 +31,13 @@ def get(event, context, session):
 @database
 @token_required
 @validate(schema)
-def post(event, context, session):
+def put(event, context, session):
     body = event["body"]
     user_id = event["user_id"]
 
     # Update settings in database
     settings = Settings(user_id, body)
-    session.merge(settings)
+    session.add(settings)
     session.commit()
 
     return {"statusCode": 200}

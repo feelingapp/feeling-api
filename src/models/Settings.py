@@ -14,9 +14,6 @@ class Settings(BaseModel):
         self.user_id = user_id
         self.settings = settings
 
-    def toJson(self):
-        return {"id": self.id, "user_id": self.user_id, "settings": self.settings}
-
     def __repr__(self):
         return "<Settings(id='{}', user_id='{}' settings='{}', created_at='{}', updated_at='{}')>".format(
             self.id, self.user_id, self.settings, self.created_at, self.updated_at
