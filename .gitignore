@@ -9,7 +9,6 @@ pip-delete-this-directory.txt
 
 # Virtual Environment
 venv
-.env
 
 # pytest
 .pytest_cache
@@ -28,4 +27,3 @@ node_modules
 
 # PyCharm
 .idea
-.idea/
