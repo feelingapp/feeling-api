@@ -46,9 +46,3 @@ npm run develop
 ```bash
 npm run stop-database
 ```
-
-6. To stop the database when you're finished:
-
-```bash
-npm run stop-database
-```
