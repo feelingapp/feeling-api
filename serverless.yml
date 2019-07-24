@@ -47,12 +47,12 @@ functions:
           method: delete
           cors: true
 
-  post_settings:
-    handler: src/functions/settings.post
+  put_settings:
+    handler: src/functions/settings.put
     events:
       - http:
           path: /settings
-          method: post
+          method: put
           cors: true
 
   get_settings:
@@ -82,10 +82,10 @@ functions:
   siginin:
     handler: src/functions/sign_in.sign_in
     events:
-    - http:
-        path: /authorize
-        method: POST
-        cors: false
+      - http:
+          path: /authorize
+          method: POST
+          cors: false
 
   account_exists:
     handler: src/functions/account.exists
