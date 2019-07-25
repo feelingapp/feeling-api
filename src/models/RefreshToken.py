@@ -13,7 +13,7 @@ class RefreshToken(BaseModel):
     __tablename__ = "refresh_token"
 
     # Equivalent to 14 days
-    REFRESH_TOKEN_LIFE = "20160"
+    TOKEN_LIFE = "20160"
 
     token_hash = Column(String, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
