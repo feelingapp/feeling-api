@@ -24,7 +24,7 @@ class RefreshToken(BaseModel):
 
     def __init__(self, user_id, client_id):
         self.token = self.generate_token()
-        self.token_hash = self.hash_token(token)
+        self.token_hash = RefreshToken.hash_token(self.token)
         self.user_id = user_id
         self.client_id = client_id
 
@@ -46,10 +46,11 @@ class RefreshToken(BaseModel):
             for _ in range(self.TOKEN_LENGTH)
         )
 
-    def hash_token(self, token):
+    @staticmethod
+    def hash_token(unhashed_token):
         """Hashes a token with SHA256"""
 
-        return sha256(token.encode()).hexdigest()
+        return sha256(unhashed_token.encode()).hexdigest()
 
     def verify_token(self, token):
         """Checks if a token matches with a hash"""
