@@ -1,5 +1,6 @@
 import secrets
 import string
+import time
 from hashlib import sha256
 
 from argon2 import PasswordHasher
@@ -18,7 +19,8 @@ class RefreshToken(BaseModel):
     TOKEN_LENGTH = 20
 
     token = None
-    token_hash = Column(String, nullable=False)
+    token_hash = Column(String, nullable=False, unique=True)
+    issue_time = Column(DateTime(), nullable=False, default=lambda: int(time.time()))
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
 
@@ -29,16 +31,19 @@ class RefreshToken(BaseModel):
         self.client_id = client_id
 
     def __repr__(self):
-        return "<RefreshToken(id='{}', token_hash='{}', user_id='{}', client_id='{}', valid_at='{}', expires_at='{}' created_at='{}', updated_at='{}')>".format(
+        return "<RefreshToken(id='{}', token_hash='{}', user_id='{}', client_id='{}', issue_time='{}', created_at='{}', updated_at='{}')>".format(
             self.id,
             self.token_hash,
+            self.issue_time,
             self.user_id,
             self.client_id,
-            self.valid_at,
-            self.expires_at,
             self.created_at,
             self.updated_at,
         )
+
+    @property
+    def expires_in(self):
+        return self.issue_time + self.TOKEN_LIFE
 
     def generate_token(self):
         return "".join(

@@ -171,16 +171,12 @@ def refresh_token_grant(client_params, session):
 
     session.delete(db_refresh_token)
 
-    # TODO: find a correct format and type for expiry_time
-    expiry_time = "in 2 weeks"
-
-    jwt_payload = {"user_id": db_refresh_token.user_id, "expiry_time": str(expiry_time)}
+    jwt_payload = {"user_id": db_refresh_token.user_id, "expiry_time": str(refresh_token.expires_in)}
 
     jwtoken = jwt.encode(
         jwt_payload, os.getenv("SECRET_KEY"), algorithm="HS256"
     ).decode("utf-8")
 
-    # if an overlap ever happens with the refresh token it means that it is not secure enough
     refresh_token = RefreshToken(db_refresh_token.user_id, db_refresh_token.client_id)
     session.add(db_refresh_token)
     session.commit()
