@@ -44,11 +44,13 @@ body_schema = {
 
 @validate(body_sc=body_schema)
 @database
-def sign_in(event, context, session):
+def sign_in(event, context, session, register=False):
     body = json.loads(event["body"])
 
     email = body["email"]
     password = body["password"]
+    first_name = body["first_name"]
+    last_name = body["last_name"]
     client_id = body["client_id"]
     response_type = body["response_type"]
     redirect_uri = body["redirect_uri"]
@@ -142,35 +144,55 @@ def sign_in(event, context, session):
 
     user = session.query(User).filter(User.email == email).first()
 
-    if not user:
-        return {
-            "statusCode": 404,
-            "body": {
-                "error": [
-                    {
-                        "type": "account_not_found",
-                        "message": "An account does not exist with the email provided",
-                    }
-                ]
-            },
-        }
+    if register:
+        if user and user.verified:
+            return {
+                "statusCode": 400,
+                "body": {
+                    "error": [
+                        {
+                            "type": "account_email_exists",
+                            "message": "An account with the email provided already exists",
+                        }
+                    ]
+                },
+            }
 
-    if not user.verify_password(password):
-        return {
-            "statusCode": 401,
-            "body": {
-                "error": [
-                    {
-                        "type": "wrong_password",
-                        "message": "The password given is incorrect",
-                    }
-                ]
-            },
-        }
+        # Create a new account
+        user = User(email, password, first_name, last_name)
+        session.add(user)
+        session.commit()
+    else:
+        if not user:
+            return {
+                "statusCode": 404,
+                "body": {
+                    "error": [
+                        {
+                            "type": "account_not_found",
+                            "message": "An account does not exist with the email provided",
+                        }
+                    ]
+                },
+            }
+
+        if not user.verify_password(password):
+            return {
+                "statusCode": 401,
+                "body": {
+                    "error": [
+                        {
+                            "type": "wrong_password",
+                            "message": "The password given is incorrect",
+                        }
+                    ]
+                },
+            }
 
     # Delete existing user's authorization code if it exists
     session.query(AuthorizationCode).filter_by(user_id=user.id).delete()
 
+    # Create a new authorization code
     authorization_code = AuthorizationCode(
         user.id, client_id, code_challenge, code_challenge_method
     )
@@ -185,3 +207,15 @@ def sign_in(event, context, session):
             "redirect_uri": redirect_uri,
         },
     }
+
+
+register_schema = {
+    "type": "object",
+    "properties": {"first_name": {"type": "string"}, "last_name": {"type": "string"}},
+    "required": ["first_name", "last_name"],
+}
+
+
+@validate(body_sc=register_schema)
+def register(event, context):
+    return sign_in(event, context, session=None, register=True)

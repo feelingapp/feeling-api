@@ -80,19 +80,19 @@ functions:
           cors: true
 
   sign_in:
-    handler: src/functions/sign_in.sign_in
+    handler: src/functions/authorize.sign_in
     events:
       - http:
           path: /sign-in
-          method: POST
+          method: post
           cors: true
 
   register:
-    handler: src/functions/register.register
+    handler: src/functions/authorize.register
     events:
       - http:
           path: /register
-          method: POST
+          method: post
           cors: true
 
   account_exists:
