@@ -1,40 +1,19 @@
-from sqlalchemy import Column, ForeignKey, String, DateTime
-from sqlalchemy.dialects.postgresql import UUID
-from argon2 import PasswordHasher
-from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.sql import expression
 from hashlib import sha256
 
+from argon2 import PasswordHasher
+from sqlalchemy import Column, DateTime, ForeignKey, String
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql import expression
+
 from src.models import BaseModel
-
-# TODO: find somewhere to put this constant
-# (14 DAYS IN MINUTES)
-SECRET_SALT = "ASECRETBOI"
-REFRESH_TOKEN_LIFE = "20160"
-TOKEN_LIFE = "30"
-
-
-class utc_valid_at(expression.FunctionElement):
-    type = DateTime()
-
-
-class utc_expires_at(expression.FunctionElement):
-    type = DateTime()
-
-
-@compiles(utc_valid_at, "postgresql")
-def pg_utc_valid_at(element, compiler, **kw):
-    return "TIMEZONE('utc', CURRENT_TIMESTAMP) + ({} * interval '1 minute')".format(TOKEN_LIFE)
-
-
-@compiles(utc_expires_at, "postgresql")
-def pg_utc_expires_at(element, compiler, **kw):
-    return "TIMEZONE('utc', CURRENT_TIMESTAMP) + ({} * interval '1 minute')".format(REFRESH_TOKEN_LIFE)
-
 
 
 class RefreshToken(BaseModel):
     __tablename__ = "refresh_token"
+
+    # Equivalent to 14 days
+    REFRESH_TOKEN_LIFE = "20160"
 
     token_hash = Column(String, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
