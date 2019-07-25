@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from urllib import parse
 
@@ -59,7 +60,7 @@ def sign_in(event, context, session):
 
     try:
         token_payload = jwt.decode(
-            code_challenge_token, AUTH_PRIVATE_KEY, algorithms=["HS256"]
+            code_challenge_token, os.getenv("SECRET_KEY"), algorithms=["HS256"]
         )
     # TODO: add extra catches for different token errors
     except jwt.exceptions.InvalidSignatureError as error:

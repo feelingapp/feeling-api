@@ -1,3 +1,5 @@
+import os
+
 import jwt
 from jinja2 import Environment, FileSystemLoader
 import re
@@ -109,7 +111,9 @@ def authorize(event, context, session):
 
     # TODO: add an expiry time to the code_challenge tokens
     token_payload = {"code_challenge": code_challenge}
-    token = jwt.encode(token_payload, AUTH_PRIVATE_KEY, algorithm="HS256").decode("utf-8")
+    token = jwt.encode(
+        token_payload, os.getenv("SECRET_KEY"), algorithm="HS256"
+    ).decode("utf-8")
 
     return {
         "statusCode": 200,
