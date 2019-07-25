@@ -97,7 +97,7 @@ def sign_in(event, context, session, register=False):
         return {
             "statusCode": 400,
             "body": {
-                "error": [
+                "errors": [
                     {
                         "type": "invalid_code_challenge_token",
                         "message": "The code challenge token is invalid",
@@ -110,7 +110,7 @@ def sign_in(event, context, session, register=False):
         return {
             "statusCode": 400,
             "body": {
-                "error": [
+                "errors": [
                     {
                         "type": "incorrect_code_challenge",
                         "message": "The code_challenge is incorrect",
@@ -125,7 +125,7 @@ def sign_in(event, context, session, register=False):
         return {
             "statusCode": 400,
             "body": {
-                "error": [
+                "errors": [
                     {
                         "type": "invalid_client_id",
                         "message": "The client ID is not valid",
@@ -138,7 +138,7 @@ def sign_in(event, context, session, register=False):
         return {
             "statusCode": 400,
             "body": {
-                "error": [
+                "errors": [
                     {
                         "type": "invalid_redirect_uri",
                         "message": "The redirect_uri was not found",
@@ -154,7 +154,7 @@ def sign_in(event, context, session, register=False):
             return {
                 "statusCode": 400,
                 "body": {
-                    "error": [
+                    "errors": [
                         {
                             "type": "account_email_exists",
                             "message": "An account with the email provided already exists",
@@ -172,7 +172,7 @@ def sign_in(event, context, session, register=False):
             return {
                 "statusCode": 404,
                 "body": {
-                    "error": [
+                    "errors": [
                         {
                             "type": "account_not_found",
                             "message": "An account does not exist with the email provided",
@@ -185,7 +185,7 @@ def sign_in(event, context, session, register=False):
             return {
                 "statusCode": 401,
                 "body": {
-                    "error": [
+                    "errors": [
                         {
                             "type": "wrong_password",
                             "message": "The password given is incorrect",
