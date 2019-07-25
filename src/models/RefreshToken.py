@@ -39,11 +39,7 @@ class RefreshToken(BaseModel):
     token_hash = Column(String, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
-    # TODO: make sure nothing needs to be done with creation order
-    valid_at = Column(DateTime(), nullable=False, server_default=utc_valid_at())
-    expires_at = Column(DateTime(), nullable=False, server_default=utc_expires_at())
 
-    # TODO: confirm valid_at and and expires_at don't need to be put in here
     def __init__(self, token, user_id, client_id):
         self.token_hash = self.hash_token(token)
         self.user_id = user_id
