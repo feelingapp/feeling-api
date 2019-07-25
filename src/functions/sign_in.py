@@ -58,8 +58,7 @@ def sign_in(event, context, session):
         token_payload = jwt.decode(
             code_challenge_token, os.getenv("SECRET_KEY"), algorithms=["HS256"]
         )
-    # TODO: add extra catches for different token errors
-    except jwt.exceptions.InvalidSignatureError as error:
+    except:
         return {
             "statusCode": 400,
             "body": {
@@ -86,32 +85,62 @@ def sign_in(event, context, session):
         }
 
     client = session.query(Client).filter(Client.id == client_id).first()
-    if not client:
-        return {"statusCode": 403, "body": {"error": "the client ID is not valid"}}
 
-    if not client.verify_URI(redirect_uri):
-        return {"statusCode": 403, "message": "client_id or redirect_uri is incorrect"}
+    if not client:
+        return {
+            "statusCode": 400,
+            "body": {
+                "error": [
+                    {
+                        "type": "invalid_client_id",
+                        "message": "The client ID is not valid",
+                    }
+                ]
+            },
+        }
 
     user = session.query(User).filter(User.email == email).first()
 
     if not user:
-        return {"statusCode": 403, "message": "email or password is incorrect"}
+        return {
+            "statusCode": 404,
+            "body": {
+                "error": [
+                    {
+                        "type": "account_not_found",
+                        "message": "An account does not exist with the email provided",
+                    }
+                ]
+            },
+        }
 
     if not user.verify_password(password):
-        return {"statusCode": 403, "message": "email or password is incorrect"}
+        return {
+            "statusCode": 401,
+            "body": {
+                "error": [
+                    {
+                        "type": "wrong_password",
+                        "message": "The password given is incorrect",
+                    }
+                ]
+            },
+        }
 
     # Delete existing user's authorization code if it exists
     session.query(AuthorizationCode).filter_by(user_id=user.id).delete()
 
-    code = AuthorizationCode(
+    authorization_code = AuthorizationCode(
         user.id, client_id, code_challenge_method, code_challenge, redirect_uri
     )
-
-    url_parameters = urlencode({"authorization_code": str(code.authorization_code)})
-
-    complete_redirect_uri = "https://{}?={}".format(redirect_uri, url_parameters)
-
-    session.add(code)
+    session.add(authorization_code)
     session.commit()
 
-    return {"statusCode": 302, "header": {"Location": complete_redirect_uri}}
+    return {
+        "statusCode": 200,
+        "body": {
+            "authorization_code": authorization_code,
+            "expires_in": AUTHORIZATION_CODE_EXPIRY_TIME,
+            "redirect_uri": redirect_uri,
+        },
+    }
