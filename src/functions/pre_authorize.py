@@ -25,8 +25,6 @@ def authorize(event, context, session):
 
     token_payload = {"code_challenge": code_challenge}
 
-    token = jwt.encode(
-        token_payload, os.getenv("SECRET_KEY"), algorithm="HS256"
-    ).decode("utf-8")
+    token = jwt.encode(token_payload, os.getenv("SECRET_KEY"), algorithm="HS256")
 
     return {"statusCode": 200, "body": {"code_challenge_token": token}}

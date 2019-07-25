@@ -17,8 +17,8 @@ from src.models import BaseModel
 class RefreshToken(BaseModel):
     __tablename__ = "refresh_token"
 
-    TOKEN_LIFE = 20160  # Equivalent to 14 days
-    TOKEN_LENGTH = 20
+    # Equivalent to 14 days
+    TOKEN_LIFE = 20160
 
     token = None
     token_hash = Column(String, nullable=False, unique=True)
@@ -50,9 +50,7 @@ class RefreshToken(BaseModel):
     def generate_token(self):
         payload = {"user_id": self.user_id, "expiry_time": str(self.expires_in)}
 
-        self.token = jwt.encode(
-            payload, os.getenv("SECRET_KEY"), algorithm="HS256"
-        ).decode("utf-8")
+        self.token = jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256")
 
     @staticmethod
     def hash_token(unhashed_token):
