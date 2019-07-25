@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import jwt
 
-from src.models import AuthorizationCode, RefreshToken
+from src.models import AccessToken, AuthorizationCode, RefreshToken
 from src.utils.decorators import database, validate
 
 # TODO: finish schema
@@ -108,17 +108,7 @@ def authorization_code_grant(event, session):
             },
         }
 
-    # TODO: find a correct format and type for expiry_time
-    expiry_time = "in 30 mins"
-
-    payload = {
-        "user_id": str(authorization_code.user_id),
-        "expiry_time": str(expiry_time),
-    }
-
-    jwtoken = jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256").decode(
-        "utf-8"
-    )
+    access_token = AccessToken(authorization_code.user_id)
 
     refresh_token = RefreshToken(
         authorization_code.user_id, authorization_code.client_id
@@ -128,7 +118,10 @@ def authorization_code_grant(event, session):
 
     return {
         "statusCode": 200,
-        "body": {"access_token": jwtoken, "refresh_token": refresh_token.token},
+        "body": {
+            "access_token": access_token.token,
+            "refresh_token": refresh_token.token,
+        },
     }
 
 
