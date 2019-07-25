@@ -96,7 +96,7 @@ functions:
           cors: true
 
   token:
-    handler: src/functions/token.token
+    handler: src/functions/token.get_token
     events:
       - http:
           path: /token

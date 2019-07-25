@@ -39,7 +39,7 @@ def database(function):
 
 
 # TODO: validate against DoS attacks by limiting the amount of items in lists and limiting the number of query parameters
-def validate(header_sc=None, body_sc=None):
+def validate(query_param_sc=None, body_sc=None):
     """Decorator to help validate the body and header of the event"""
 
     def parse_error_message(message):
@@ -53,15 +53,15 @@ def validate(header_sc=None, body_sc=None):
             event = args[0]
             #print(json.dumps(event, indent=4))  # this line causes errors elsewhere in the code for some reason
 
-            if header_sc:
+            if query_param_sc:
                 try:
-                    jsonschema.validate(event,header_sc)
+                    jsonschema.validate(event, query_param_sc)
                 except jsonschema.exceptions.ValidationError as e:
                     return {"statusCode": 400, "body": {"error": e.message}}
 
             if body_sc and event["body"]:
 
-                body = parse_parameters(event["body"])
+                body = json.loads(event["body"])
                 # Create JSON schema validator
                 # TODO: check specifications on each of the validators and why to use them
                 validator = Draft4Validator(body_sc)
