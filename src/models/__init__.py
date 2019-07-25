@@ -1,6 +1,6 @@
+from src.models.Base import Base, BaseModel
 from src.models.AccessToken import AccessToken
 from src.models.AuthorizationCode import AuthorizationCode
-from src.models.Base import Base, BaseModel
 from src.models.Client import Client
 from src.models.Emotion import Emotion
 from src.models.Feeling import Feeling
