@@ -5,11 +5,14 @@ from src.utils.decorators import database, token_required, validate
 
 schema = {
     "type": "object",
-    "properties": {
-        "daily_reminder": {
-            "enabled": {"type": "boolean"},
-            "time": {"hour": {"type": "number"}, "minute": {"type": "number"}},
-        }
+    "body": {
+        "type": "object",
+        "properties": {
+            "daily_reminder": {
+                "enabled": {"type": "boolean"},
+                "time": {"hour": {"type": "number"}, "minute": {"type": "number"}},
+            }
+        },
     },
 }
 

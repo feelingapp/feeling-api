@@ -38,8 +38,7 @@ def database(function):
     return wrap_function
 
 
-# TODO: validate against DoS attacks by limiting the amount of items in lists and limiting the number of query parameters
-def validate(query_param_sc=None, body_sc=None):
+def validate(schema):
     """Decorator to help validate the body and header of the event"""
 
     def parse_error_message(message):
@@ -47,37 +46,25 @@ def validate(query_param_sc=None, body_sc=None):
 
         return re.sub(r"(\\n|\\t|\\')", "", message)
 
-    # TODO: make sure this all works with the other API function calls
     def decorator(function):
         def wrap_function(*args):
-            event = args[0]
-            #print(json.dumps(event, indent=4))  # this line causes errors elsewhere in the code for some reason
+            event = json.loads(args[0])
 
-            if query_param_sc:
-                try:
-                    jsonschema.validate(event, query_param_sc)
-                except jsonschema.exceptions.ValidationError as e:
-                    return {"statusCode": 400, "body": {"error": e.message}}
+            # Create JSON schema validator
+            validator = Draft4Validator(schema)
 
-            if body_sc and event["body"]:
+            # Generate errors
+            errors = [
+                {
+                    "type": "validation-error",
+                    "message": parse_error_message(error.message),
+                }
+                for error in validator.iter_errors(event)
+            ]
 
-                body = json.loads(event["body"])
-                # Create JSON schema validator
-                # TODO: check specifications on each of the validators and why to use them
-                validator = Draft4Validator(body_sc)
-
-                # Generate errors
-                errors = [
-                    {
-                        "type": "validation-error",
-                        "message": parse_error_message(error.message),
-                    }
-                    for error in validator.iter_errors(body)
-                ]
-
-                # Return error to client if body is invalid
-                if errors:
-                    return {"statusCode": 400, "body": {"errors": errors}}
+            # Return error to client if event is invalid
+            if errors:
+                return {"statusCode": 400, "body": {"errors": errors}}
 
             # Call function
             return function(*args)
@@ -114,11 +101,3 @@ def token_required(function):
         return {"statusCode": 401}
 
     return wrap_function
-
-
-# TODO: double check why parse_qs makes every item a list
-def parse_parameters(body):
-    dict = parse.parse_qs(body)
-    for item in dict:
-        dict[item] = dict[item][0]
-    return dict

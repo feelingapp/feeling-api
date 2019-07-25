@@ -6,12 +6,19 @@ from src.utils.decorators import database, token_required, validate
 
 schema = {
     "type": "object",
-    "properties": {
-        "emotion": {"type": "string", "enum": Emotion.list()},
-        "description": {"type": "string"},
-        "hashtags": {"type": "array", "items": {"type": "string"}, "uniqueItems": True},
+    "body": {
+        "type": "object",
+        "properties": {
+            "emotion": {"type": "string", "enum": Emotion.list()},
+            "description": {"type": "string"},
+            "hashtags": {
+                "type": "array",
+                "items": {"type": "string"},
+                "uniqueItems": True,
+            },
+        },
+        "required": ["emotion"],
     },
-    "required": ["emotion"],
 }
 
 
@@ -33,7 +40,7 @@ def get(event, context, session):
 
 @database
 @token_required
-@validate(body_sc=schema)
+@validate(schema)
 def post(event, context, session):
     body = json.loads(event["body"])
 
@@ -53,7 +60,7 @@ def post(event, context, session):
 
 @database
 @token_required
-@validate(body_sc=schema)
+@validate(schema)
 def put(event, context, session):
     body = json.loads(event["body"])
 

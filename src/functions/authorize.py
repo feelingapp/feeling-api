@@ -8,41 +8,46 @@ import jwt
 from sqlalchemy.orm import mapper
 
 from src.models import AuthorizationCode, Client, User
-from src.utils.decorators import database, parse_parameters, validate
+from src.utils.decorators import database, validate
 
 STATE_LENGTH = 10
 AUTHORIZATION_CODE_EXPIRY_TIME = 3600
 CODE_CHALLENGE_METHOD = "SHA256"
 
-body_schema = {
+sign_in_schema = {
     "type": "object",
     "properties": {
-        "email": {"type": "string"},
-        "password": {"type": "string"},
-        "response_type": {"type": "string"},
-        "redirect_uri": {"type": "string"},
-        "code_challenge_method": {"type": "string"},
-        "code_challenge": {"type": "string"},
-        "state": {
-            "type": "string",
-            "minLength": STATE_LENGTH,
-            "maxLength": STATE_LENGTH,
-        },
+        "body": {
+            "type": "object",
+            "properties": {
+                "email": {"type": "string"},
+                "password": {"type": "string"},
+                "response_type": {"type": "string"},
+                "redirect_uri": {"type": "string"},
+                "code_challenge_method": {"type": "string"},
+                "code_challenge": {"type": "string"},
+                "state": {
+                    "type": "string",
+                    "minLength": STATE_LENGTH,
+                    "maxLength": STATE_LENGTH,
+                },
+            },
+            "required": [
+                "email",
+                "password",
+                "client_id",
+                "response_type",
+                "redirect_uri",
+                "code_challenge_method",
+                "code_challenge",
+                "state",
+            ],
+        }
     },
-    "required": [
-        "email",
-        "password",
-        "client_id",
-        "response_type",
-        "redirect_uri",
-        "code_challenge_method",
-        "code_challenge",
-        "state",
-    ],
 }
 
 
-@validate(body_sc=body_schema)
+@validate(sign_in_schema)
 @database
 def sign_in(event, context, session, register=False):
     body = json.loads(event["body"])
@@ -211,11 +216,19 @@ def sign_in(event, context, session, register=False):
 
 register_schema = {
     "type": "object",
-    "properties": {"first_name": {"type": "string"}, "last_name": {"type": "string"}},
-    "required": ["first_name", "last_name"],
+    "properties": {
+        "body": {
+            "type": "object",
+            "properties": {
+                "first_name": {"type": "string"},
+                "last_name": {"type": "string"},
+            },
+            "required": ["first_name", "last_name"],
+        }
+    },
 }
 
 
-@validate(body_sc=register_schema)
+@validate(register_schema)
 def register(event, context):
     return sign_in(event, context, session=None, register=True)

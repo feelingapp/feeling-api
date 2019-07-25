@@ -6,7 +6,7 @@ from src.models.Client import Client
 from src.utils.decorators import database, validate
 
 
-query_parameters_schema = {
+schema = {
     "type": "object",
     "properties": {
         "queryStringParameters": {
@@ -19,7 +19,7 @@ query_parameters_schema = {
 
 
 @database
-@validate(query_param_sc=query_parameters_schema)
+@validate(schema)
 def authorize(event, context, session):
     code_challenge = event["queryStringParameters"]["code_challenge"]
 
