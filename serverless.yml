@@ -71,11 +71,11 @@ functions:
           method: get
           cors: true
 
-  authorization:
-    handler: src/functions/authorize.authorize
+  pre_authorize:
+    handler: src/functions/pre_authorize.pre_authorize
     events:
       - http:
-          path: /authorize
+          path: /pre-authorize
           method: get
           cors: true
 
