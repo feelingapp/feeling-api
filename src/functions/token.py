@@ -1,27 +1,22 @@
 import json
-import string
-
-from src.models.AuthorizationCode import AuthorizationCode
-from src.models import RefreshToken
 from datetime import datetime, timedelta
-import secrets
+
 import jwt
 
-# take this from a file after testing
-from src.utils.decorators import database, validate, parse_parameters
+from src.models import AuthorizationCode, RefreshToken
 
-PRIVATE_KEY = "privatekey"
+# take this from a file after testing
+from src.utils.decorators import database, parse_parameters, validate
 
 # TODO: finish schema
 schema = {}
 
 
-# needs to validate the request
 @validate(schema)
 @database
 def get_token(event, context, session):
-    client_parameters = parse_parameters(event['body'])
-    grant_type = client_parameters['grant_type']
+    client_parameters = parse_parameters(event["body"])
+    grant_type = client_parameters["grant_type"]
     if grant_type == "authorization_code":
         return auth_code_flow(event, session)
     elif grant_type == "refresh_token":
@@ -44,7 +39,11 @@ def auth_code_flow(event, session):
     redirect_uri = body["redirect_uri"]
     client_id = body["client_id"]
 
-    db_code = session.query(AuthorizationCode).filter(AuthorizationCode.authorization_code == code).first()
+    db_code = (
+        session.query(AuthorizationCode)
+        .filter(AuthorizationCode.authorization_code == code)
+        .first()
+    )
 
     # TODO: fix things
     if not db_code:
@@ -64,7 +63,9 @@ def auth_code_flow(event, session):
 
     payload = {"user_id": str(db_code.user_id), "expiry_time": str(expiry_time)}
 
-    jwtoken = jwt.encode(payload, PRIVATE_KEY, algorithm='HS256').decode('utf-8')
+    jwtoken = jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256").decode(
+        "utf-8"
+    )
 
     refresh_token = generate_refresh_token()
 
@@ -73,7 +74,10 @@ def auth_code_flow(event, session):
     session.add(db_refresh_token)
     session.commit()
 
-    return {"statusCode": 200, "body": {"access_token": jwtoken, "refresh_token": refresh_token}}
+    return {
+        "statusCode": 200,
+        "body": {"access_token": jwtoken, "refresh_token": refresh_token},
+    }
 
 
 refresh_schema = {}
@@ -84,17 +88,27 @@ refresh_schema = {}
 def refresh_flow(client_params, session):
     refresh_token = client_params["refresh_token"]
     hashed_refresh_token = RefreshToken.hash_token(refresh_token)
-    db_refresh_tokens = session.query(RefreshToken).filter(RefreshToken.token_hash == hashed_refresh_token)
+    db_refresh_tokens = session.query(RefreshToken).filter(
+        RefreshToken.token_hash == hashed_refresh_token
+    )
     if not db_refresh_tokens.count():
         # TODO: fix the statusCode
-        return {"statusCode": 300, "body": {"error": "that refresh token does not exist"}}
+        return {
+            "statusCode": 300,
+            "body": {"error": "that refresh token does not exist"},
+        }
     # TODO: create a second table of previous refresh tokens or add another field so that we can catch potential breaches
 
     db_refresh_token = db_refresh_tokens.one()
     if db_refresh_token.expired():
         # TODO: fix the statusCode
-        return {"statusCode": 300, "body": {"error": "the token has expired, to get another you must get an "
-                                                     "authorization code"}}
+        return {
+            "statusCode": 300,
+            "body": {
+                "error": "the token has expired, to get another you must get an "
+                "authorization code"
+            },
+        }
 
     session.delete(db_refresh_token)
 
@@ -103,20 +117,20 @@ def refresh_flow(client_params, session):
 
     jwt_payload = {"user_id": db_refresh_token.user_id, "expiry_time": str(expiry_time)}
 
-    jwtoken = jwt.encode(jwt_payload, PRIVATE_KEY, algorithm='HS256').decode('utf-8')
+    jwtoken = jwt.encode(
+        jwt_payload, os.getenv("SECRET_KEY"), algorithm="HS256"
+    ).decode("utf-8")
 
     # if an overlap ever happens with the refresh token it means that it is not secure enough
     refresh_token = generate_refresh_token()
-    db_refresh_token = RefreshToken(refresh_token, db_refresh_token.user_id, db_refresh_token.client_id)
+    db_refresh_token = RefreshToken(
+        refresh_token, db_refresh_token.user_id, db_refresh_token.client_id
+    )
 
     session.add(db_refresh_token)
 
     session.commit()
-    return {"statusCode": 200, "body": {"access_token": jwtoken, "refresh_token": refresh_token}}
-
-
-def generate_refresh_token():
-    len_code = 20
-    # TODO: look if there is a better library than secrets and if so use it
-    code = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(len_code))
-    return code
+    return {
+        "statusCode": 200,
+        "body": {"access_token": jwtoken, "refresh_token": refresh_token},
+    }

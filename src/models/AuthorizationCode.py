@@ -18,14 +18,16 @@ class AuthorizationCode(BaseModel):
     CODE_LENGTH = 48
     CODE_LIFE = 300
 
-    code = Column(String(CODE_LENGTH), nullable=False, unique=True)
+    code = Column(String(self.CODE_LENGTH), nullable=False, unique=True)
     user_id = Column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, unique=True
     )
     client_id = Column(
         UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False, unique=False
     )
-    auth_time = Column(DateTime(), nullable=False, default=lambda: int(time.time()))
+    authorization_time = Column(
+        DateTime(), nullable=False, default=lambda: int(time.time())
+    )
     code_challenge = Column(String, nullable=False)
     code_challenge_method = Column(String, nullable=False)
 
@@ -41,31 +43,36 @@ class AuthorizationCode(BaseModel):
             self.code,
             self.user_id,
             self.client_id,
-            self.auth_time,
+            self.authorization_time,
             self.code_challenge,
             self.code_challenge_method,
             self.created_at,
             self.updated_at,
         )
 
-    def verify_code_challenge(self, verifier):
-        # TODO: find a way to clean this up
-        if self.code_challenge_method == "SHA256":
-            # TODO: test and verify this is the right way to do this
-            hashed_obj = sha256(bytes(verifier, "utf-8"))
-            b64encoded_string = b64encode(hashed_obj.digest()).decode(encoding="UTF-8")
+    @property
+    def expires_in(self):
+        return self.authorization_time + self.CODE_LIFE
 
-            return b64encoded_string == self.code_challenge
+    # TODO: test and verify this is the right way to do this
+    def verify_code_challenge(self, verifier):
+        if self.code_challenge_method != "SHA256":
+            return False
+
+        hashed_obj = sha256(verifier.encode())
+        b64encoded_string = b64encode(hashed_obj.digest()).decode(encoding="UTF-8")
+
+        return b64encoded_string == self.code_challenge
 
     def generate_code(self):
         """Generates an authorization code"""
 
         return "".join(
             secrets.choice(string.ascii_letters + string.digits)
-            for _ in range(CODE_LENGTH)
+            for _ in range(self.CODE_LENGTH)
         )
 
     def has_expired(self):
         """Check if the authorization code has expired"""
 
-        return self.auth_time + CODE_LIFE < time.time()
+        return self.authorization_time + self.CODE_LIFE < time.time()

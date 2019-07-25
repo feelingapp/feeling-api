@@ -7,8 +7,7 @@ from urllib.parse import urlencode
 import jwt
 from sqlalchemy.orm import mapper
 
-from src.models import Client, User
-from src.models.AuthorizationCode import AuthorizationCode
+from src.models import AuthorizationCode, Client, User
 from src.utils.decorators import database, parse_parameters, validate
 
 STATE_LENGTH = 10
@@ -173,7 +172,7 @@ def sign_in(event, context, session):
     session.query(AuthorizationCode).filter_by(user_id=user.id).delete()
 
     authorization_code = AuthorizationCode(
-        user.id, client_id, code_challenge_method, code_challenge, redirect_uri
+        user.id, client_id, code_challenge, code_challenge_method
     )
     session.add(authorization_code)
     session.commit()
@@ -181,8 +180,8 @@ def sign_in(event, context, session):
     return {
         "statusCode": 200,
         "body": {
-            "authorization_code": authorization_code,
-            "expires_in": AUTHORIZATION_CODE_EXPIRY_TIME,
+            "authorization_code": authorization_code.code,
+            "expires_in": authorization_code.expires_in,
             "redirect_uri": redirect_uri,
         },
     }
