@@ -165,6 +165,9 @@ def refresh_token_grant(client_params, session):
             },
         }
 
+    access_token = AccessToken(db_refresh_token.user_id)
+
+    # TODO: don't always refresh the refresh token when getting a new access token
     refresh_token = RefreshToken(db_refresh_token.user_id, db_refresh_token.client_id)
     session.add(refresh_token)
     session.commit()
@@ -172,7 +175,7 @@ def refresh_token_grant(client_params, session):
     return {
         "statusCode": 200,
         "body": {
-            "access_token": refresh_token.token,
+            "access_token": access_token.token,
             "refresh_token": refresh_token.token,
         },
     }
