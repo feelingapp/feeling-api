@@ -61,14 +61,10 @@ class RefreshToken(BaseModel):
             self.updated_at,
         )
 
-    # TODO: verify that this is correct
     def hash_token(self, token):
+        """Hashes a token with SHA256"""
 
-        # TODO: use another hasher with salt because this won't work as there is nothing to identify the record with
-        # e.g. if a user has a token how would he find it in the
-
-        salted_string = SECRET_SALT + token
-        return sha256(bytes(salted_string,'utf-8')).hexdigest()
+        return sha256(token.encode()).hexdigest()
 
     def verify_token(self, token):
         """Checks if a token matches with a hash"""
