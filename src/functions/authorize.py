@@ -1,11 +1,9 @@
 import os
 
 import jwt
-from jinja2 import Environment, FileSystemLoader
-import re
-from src.jinjaobjects.params import params
-from src.utils.decorators import database, validate
+
 from src.models.Client import Client
+from src.utils.decorators import database, validate
 
 STATE_LENGTH = 10
 
@@ -44,6 +42,7 @@ query_param_schema = {
     },
 }
 
+
 @database
 @validate(query_param_sc=query_param_schema)
 def authorize(event, context, session):
@@ -63,10 +62,10 @@ def authorize(event, context, session):
                 "errors": [
                     {
                         "type": "invalid_response_type",
-                        "message": "Only the authorization code grant type is supported"
-                    },
-                ],
-            }
+                        "message": "Only the authorization code grant type is supported",
+                    }
+                ]
+            },
         }
 
     if code_challenge_method != CODE_CHALLENGE_METHOD:
@@ -76,7 +75,7 @@ def authorize(event, context, session):
                 "errors": [
                     {
                         "type": "invalid_code_challenge_method",
-                        "message": "Only SHA256 is supported for the code challenge method"
+                        "message": "Only SHA256 is supported for the code challenge method",
                     }
                 ]
             },
@@ -88,10 +87,7 @@ def authorize(event, context, session):
             "statusCode": 400,
             "body": {
                 "errors": [
-                    {
-                        "type": "invalid_client_id",
-                        "message": "Client ID was not found"
-                    }
+                    {"type": "invalid_client_id", "message": "Client ID was not found"}
                 ]
             },
         }
@@ -103,10 +99,10 @@ def authorize(event, context, session):
                 "error": [
                     {
                         "type": "invalid_redirect_uri",
-                        "message": "The redirect_uri was not found"
+                        "message": "The redirect_uri was not found",
                     }
                 ]
-            }
+            },
         }
 
     # TODO: add an expiry time to the code_challenge tokens
@@ -124,6 +120,6 @@ def authorize(event, context, session):
             "code_challenge_token": token,
             "code_challenge": code_challenge,
             "client_id": client_id,
-            "state": state
+            "state": state,
         },
     }

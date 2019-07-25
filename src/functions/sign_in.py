@@ -2,18 +2,14 @@ import json
 import os
 import re
 from urllib import parse
+from urllib.parse import urlencode
 
 import jwt
-from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.orm import mapper
-from urllib.parse import urlencode
-from validators import url
 
-from src.models import Client
-from src.models import User
+from src.models import Client, User
 from src.models.AuthorizationCode import AuthorizationCode
-from src.utils.decorators import database, validate, parse_parameters
-from src.functions.authorize import AUTH_PRIVATE_KEY
+from src.utils.decorators import database, parse_parameters, validate
 
 STATE_LENGTH = 10
 AUTHORIZATION_CODE_EXPIRY_TIME = 3600
@@ -105,7 +101,7 @@ def sign_in(event, context, session):
         return {"statusCode": 403, "message": "email or password is incorrect"}
 
     # Delete existing user's authorization code if it exists
-    session.query(AuthorizationCode).filter_by(user_id == user.id).delete()
+    session.query(AuthorizationCode).filter_by(user_id=user.id).delete()
 
     code = AuthorizationCode(
         user.id, client_id, code_challenge_method, code_challenge, redirect_uri
@@ -118,11 +114,4 @@ def sign_in(event, context, session):
     session.add(code)
     session.commit()
 
-
-
-    return {
-        "statusCode": 302,
-        "header": {
-            "Location": complete_redirect_uri
-        }
-    }
+    return {"statusCode": 302, "header": {"Location": complete_redirect_uri}}
