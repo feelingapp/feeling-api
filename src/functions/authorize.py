@@ -6,9 +6,6 @@ from src.models.Client import Client
 from src.utils.decorators import database, validate
 
 STATE_LENGTH = 10
-
-AUTH_PRIVATE_KEY = "secret_boi"
-
 CODE_CHALLENGE_METHOD = "SHA256"
 
 # TODO: use regex to check response_type, code_challenge_method
