@@ -162,6 +162,10 @@ def register(event, context, session):
             },
         }
 
+    # Create a new account
+    user = User(email, password, first_name, last_name)
+    session.add(user)
+    session.commit()
 
     # Delete existing user's authorization code if it exists
     session.query(AuthorizationCode).filter_by(user_id=user.id).delete()
