@@ -13,12 +13,14 @@ from src.utils.decorators import database, parse_parameters, validate
 
 STATE_LENGTH = 10
 AUTHORIZATION_CODE_EXPIRY_TIME = 3600
+CODE_CHALLENGE_METHOD = "SHA256"
 
 body_schema = {
     "type": "object",
     "properties": {
         "email": {"type": "string"},
         "password": {"type": "string"},
+        "response_type": {"type": "string"},
         "redirect_uri": {"type": "string"},
         "code_challenge_method": {"type": "string"},
         "code_challenge": {"type": "string"},
@@ -49,10 +51,37 @@ def sign_in(event, context, session):
     email = body["email"]
     password = body["password"]
     client_id = body["client_id"]
+    response_type = body["response_type"]
     redirect_uri = body["redirect_uri"]
     code_challenge_method = body["code_challenge_method"]
     code_challenge = body["code_challenge"]
     code_challenge_token = body["code_challenge_token"]
+
+    if response_type != "code":
+        return {
+            "statusCode": 400,
+            "body": {
+                "errors": [
+                    {
+                        "type": "invalid_response_type",
+                        "message": "Only the authorization code grant type is supported",
+                    }
+                ]
+            },
+        }
+
+    if code_challenge_method != CODE_CHALLENGE_METHOD:
+        return {
+            "statusCode": 400,
+            "body": {
+                "errors": [
+                    {
+                        "type": "invalid_code_challenge_method",
+                        "message": "Only SHA256 is supported for the code challenge method",
+                    }
+                ]
+            },
+        }
 
     try:
         token_payload = jwt.decode(
@@ -94,6 +123,19 @@ def sign_in(event, context, session):
                     {
                         "type": "invalid_client_id",
                         "message": "The client ID is not valid",
+                    }
+                ]
+            },
+        }
+
+    if client.redirect_uri != redirect_uri:
+        return {
+            "statusCode": 400,
+            "body": {
+                "error": [
+                    {
+                        "type": "invalid_redirect_uri",
+                        "message": "The redirect_uri was not found",
                     }
                 ]
             },
