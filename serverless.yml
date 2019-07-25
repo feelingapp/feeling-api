@@ -71,7 +71,7 @@ functions:
           method: get
           cors: true
 
-  authorisation:
+  authorization:
     handler: src/functions/authorize.authorize
     events:
       - http:
@@ -79,13 +79,13 @@ functions:
           method: get
           cors: true
 
-  siginin:
+  sign_in:
     handler: src/functions/sign_in.sign_in
     events:
       - http:
-          path: /authorize
+          path: /sign-in
           method: POST
-          cors: false
+          cors: true
 
   account_exists:
     handler: src/functions/account.exists
