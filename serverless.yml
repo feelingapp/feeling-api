@@ -15,6 +15,14 @@ provider:
   region: eu-west-2
 
 functions:
+  status:
+    handler: src/functions/status.get
+    events:
+      - http:
+          path: /status
+          method: get
+          cors: true
+
   get_feeling:
     handler: src/functions/feeling.get
     events:
