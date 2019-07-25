@@ -35,9 +35,17 @@ def put(event, context, session):
     body = event["body"]
     user_id = event["user_id"]
 
-    # Update settings in database
-    settings = Settings(user_id, body)
-    session.add(settings)
+    # Fetch settings by user ID from the database
+    settings = session.query(Settings).filter_by(user_id=user_id).first()
+
+    # Update settings if found in the database
+    if settings:
+        settings.body = body
+    else:
+        # Create new settings if none exist
+        new_settings = Settings(user_id, body)
+        session.add(new_settings)
+
     session.commit()
 
     return {"statusCode": 200}
