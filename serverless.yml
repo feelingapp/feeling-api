@@ -103,8 +103,16 @@ functions:
           method: get
           cors: true
 
-  token:
-    handler: src/functions/token.get_token
+  authorization_code_grant:
+    handler: src/functions/token.authorization_code_grant
+    events:
+      - http:
+          path: /token
+          method: post
+          cors: true
+
+  refresh_token_grant:
+    handler: src/functions/token.refresh_token_grant
     events:
       - http:
           path: /token
