@@ -18,7 +18,7 @@ class AuthorizationCode(BaseModel):
     CODE_LENGTH = 48
     CODE_LIFE = 300
 
-    code = Column(String(self.CODE_LENGTH), nullable=False, unique=True)
+    code = Column(String(CODE_LENGTH), nullable=False, unique=True)
     user_id = Column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, unique=True
     )

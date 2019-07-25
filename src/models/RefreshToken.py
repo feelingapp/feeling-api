@@ -17,13 +17,13 @@ class RefreshToken(BaseModel):
     TOKEN_LIFE = 20160  # Equivalent to 14 days
     TOKEN_LENGTH = 20
 
+    token = None
     token_hash = Column(String, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
 
     def __init__(self, user_id, client_id):
-        token = self.generate_token()
-
+        self.token = self.generate_token()
         self.token_hash = self.hash_token(token)
         self.user_id = user_id
         self.client_id = client_id

@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timedelta
 
 import jwt
@@ -6,7 +7,7 @@ import jwt
 from src.models import AuthorizationCode, RefreshToken
 
 # take this from a file after testing
-from src.utils.decorators import database, parse_parameters, validate
+from src.utils.decorators import database, validate
 
 # TODO: finish schema
 schema = {}
@@ -15,7 +16,7 @@ schema = {}
 @validate(schema)
 @database
 def get_token(event, context, session):
-    client_parameters = parse_parameters(event["body"])
+    client_parameters = event["body"]
     grant_type = client_parameters["grant_type"]
     if grant_type == "authorization_code":
         return auth_code_flow(event, session)
@@ -30,7 +31,7 @@ def get_token(event, context, session):
 auth_schema = {}
 
 
-@validate(body_sc=auth_schema)
+@validate(auth_schema)
 def auth_code_flow(event, session):
     body = json.loads(event["body"])
 
@@ -67,16 +68,14 @@ def auth_code_flow(event, session):
         "utf-8"
     )
 
-    refresh_token = generate_refresh_token()
+    refresh_token = RefreshToken(db_code.user_id, db_code.client_id)
 
-    db_refresh_token = RefreshToken(refresh_token, db_code.user_id, db_code.client_id)
-
-    session.add(db_refresh_token)
+    session.add(refresh_token)
     session.commit()
 
     return {
         "statusCode": 200,
-        "body": {"access_token": jwtoken, "refresh_token": refresh_token},
+        "body": {"access_token": jwtoken, "refresh_token": refresh_token.token},
     }
 
 
@@ -84,7 +83,7 @@ refresh_schema = {}
 
 
 # TODO: input schema validation here
-@validate(body_sc=refresh_schema)
+@validate(refresh_schema)
 def refresh_flow(client_params, session):
     refresh_token = client_params["refresh_token"]
     hashed_refresh_token = RefreshToken.hash_token(refresh_token)
@@ -122,15 +121,11 @@ def refresh_flow(client_params, session):
     ).decode("utf-8")
 
     # if an overlap ever happens with the refresh token it means that it is not secure enough
-    refresh_token = generate_refresh_token()
-    db_refresh_token = RefreshToken(
-        refresh_token, db_refresh_token.user_id, db_refresh_token.client_id
-    )
-
+    refresh_token = RefreshToken(db_refresh_token.user_id, db_refresh_token.client_id)
     session.add(db_refresh_token)
-
     session.commit()
+
     return {
         "statusCode": 200,
-        "body": {"access_token": jwtoken, "refresh_token": refresh_token},
+        "body": {"access_token": jwtoken, "refresh_token": refresh_token.token},
     }
