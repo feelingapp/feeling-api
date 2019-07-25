@@ -87,6 +87,14 @@ functions:
           method: POST
           cors: true
 
+  register:
+    handler: src/functions/register.register
+    events:
+      - http:
+          path: /register
+          method: POST
+          cors: true
+
   account_exists:
     handler: src/functions/account.exists
     events:
