@@ -139,10 +139,12 @@ refresh_token_grant_schema = {}
 def refresh_token_grant(client_params, session):
     refresh_token = client_params["refresh_token"]
     hashed_refresh_token = RefreshToken.hash_token(refresh_token)
-    db_refresh_tokens = session.query(RefreshToken).filter(
-        RefreshToken.token_hash == hashed_refresh_token
+
+    db_refresh_token = (
+        session.query(RefreshToken).filter_by(token_hash=hashed_refresh_token).first()
     )
-    if not db_refresh_tokens.count():
+
+    if not db_refresh_token:
         return {
             "statusCode": 400,
             "body": {
@@ -155,8 +157,9 @@ def refresh_token_grant(client_params, session):
             },
         }
 
-    db_refresh_token = db_refresh_tokens.one()
-    if db_refresh_token.expired():
+    if db_refresh_token.has_expired():
+        session.delete(db_refresh_token)
+
         return {
             "statusCode": 401,
             "body": {
@@ -169,19 +172,14 @@ def refresh_token_grant(client_params, session):
             },
         }
 
-    session.delete(db_refresh_token)
-
-    jwt_payload = {"user_id": db_refresh_token.user_id, "expiry_time": str(refresh_token.expires_in)}
-
-    jwtoken = jwt.encode(
-        jwt_payload, os.getenv("SECRET_KEY"), algorithm="HS256"
-    ).decode("utf-8")
-
     refresh_token = RefreshToken(db_refresh_token.user_id, db_refresh_token.client_id)
-    session.add(db_refresh_token)
+    session.add(refresh_token)
     session.commit()
 
     return {
         "statusCode": 200,
-        "body": {"access_token": jwtoken, "refresh_token": refresh_token.token},
+        "body": {
+            "access_token": refresh_token.token,
+            "refresh_token": refresh_token.token,
+        },
     }

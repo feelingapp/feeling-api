@@ -1,3 +1,5 @@
+import jwt
+import os
 import secrets
 import string
 import time
@@ -25,10 +27,10 @@ class RefreshToken(BaseModel):
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
 
     def __init__(self, user_id, client_id):
-        self.token = self.generate_token()
-        self.token_hash = RefreshToken.hash_token(self.token)
         self.user_id = user_id
         self.client_id = client_id
+        self.token = self.generate_token()
+        self.token_hash = RefreshToken.hash_token(self.token)
 
     def __repr__(self):
         return "<RefreshToken(id='{}', token_hash='{}', user_id='{}', client_id='{}', issue_time='{}', created_at='{}', updated_at='{}')>".format(
@@ -46,10 +48,11 @@ class RefreshToken(BaseModel):
         return self.issue_time + self.TOKEN_LIFE
 
     def generate_token(self):
-        return "".join(
-            secrets.choice(string.ascii_letters + string.digits)
-            for _ in range(self.TOKEN_LENGTH)
-        )
+        payload = {"user_id": self.user_id, "expiry_time": str(self.expires_in)}
+
+        self.token = jwt.encode(
+            payload, os.getenv("SECRET_KEY"), algorithm="HS256"
+        ).decode("utf-8")
 
     @staticmethod
     def hash_token(unhashed_token):
@@ -61,3 +64,8 @@ class RefreshToken(BaseModel):
         """Checks if a token matches with a hash"""
 
         return self.token_hash == self.hash_token(token)
+
+    def has_expired(self):
+        """Check if the refresh token has expired"""
+
+        return self.issue_time + self.TOKEN_LIFE < time.time()
