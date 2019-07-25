@@ -1,89 +1,71 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, Integer
+import secrets
+import string
+import time
+from base64 import b64encode
+from hashlib import sha256
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.compiler import compiles
-from src.models import BaseModel
 from sqlalchemy.sql import expression
-from hashlib import sha256
-import secrets
-from base64 import b64encode
-import string
 
-class utc_in_30(expression.FunctionElement):
-    type = DateTime()
-
-
-@compiles(utc_in_30, "postgresql")
-def pg_utcnow(element, compiler, **kw):
-    return "TIMEZONE('utc', CURRENT_TIMESTAMP) + (30 * interval '1 minute')"
-
-
-# TODO: this is a duplicate function of one in another class
-class utc_now(expression.FunctionElement):
-    type = DateTime()
-
-@compiles(utc_now, "postgresql")
-def pg_utcnow(element, compiler, **kw):
-    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
-
+from src.models import BaseModel
 
 
 class AuthorizationCode(BaseModel):
     __tablename__ = "authorization_codes"
 
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, unique=True)
-    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False, unique=False)
-    authorization_code = Column(String, nullable=False, unique=True)
-    code_challenge_method = Column(String, nullable=False)
+    CODE_LENGTH = 48
+    CODE_LIFE = 300
+
+    code = Column(String(CODE_LENGTH), nullable=False, unique=True)
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, unique=True
+    )
+    client_id = Column(
+        UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False, unique=False
+    )
+    auth_time = Column(DateTime(), nullable=False, default=lambda: int(time.time()))
     code_challenge = Column(String, nullable=False)
-    redirect_uri = Column(String, nullable=False)
-    expires_at = Column(DateTime(), nullable=False, server_default=utc_in_30(), onupdate=utc_in_30())
+    code_challenge_method = Column(String, nullable=False)
 
-
-    def __init__(self, user_id, client_id, code_challenge_method, code_challenge, redirect_uri):
-        self.user_id = str(user_id)
-        self.client_id = str(client_id)
-        self.code_challenge_method = code_challenge_method
+    def __init__(self, user_id, client_id, code_challenge, code_challenge_method):
+        self.code = self.generate_code()
+        self.user_id = user_id
+        self.client_id = client_id
         self.code_challenge = code_challenge
-        # TODO: need to add a rerun in the tiny possibility there is a duplicate
-        self.authorization_code = self.generate_auth_code()
-        self.redirect_uri = redirect_uri
-        self.expires_at = utc_in_30()
+        self.code_challenge_method = code_challenge_method
 
     def __repr__(self):
-        return "<AuthorizationCodes(user_id='{}', client_id='{}',code_challenge_method='{}', " \
-               "code_challenge='{}', authorization_code='{}', redirect_uri='{}'," \
-               " created_at='{}', updated_at='{}')>".format(
-               self.user_id, self.client_id, self.code_challenge_method,
-               self.code_challenge, self.authorization_code, self.redirect_uri,
-               self.created_at, self.updated_at
+        return "<AuthorizationCode(code='{}', user_id='{}', client_id='{}', auth_time='{}', code_challenge='{}', code_challenge_method='{}', created_at='{}', updated_at='{}')>".format(
+            self.code,
+            self.user_id,
+            self.client_id,
+            self.auth_time,
+            self.code_challenge,
+            self.code_challenge_method,
+            self.created_at,
+            self.updated_at,
         )
 
     def verify_code_challenge(self, verifier):
         # TODO: find a way to clean this up
         if self.code_challenge_method == "SHA256":
             # TODO: test and verify this is the right way to do this
-            hashed_obj = sha256(bytes(verifier,'utf-8'))
+            hashed_obj = sha256(bytes(verifier, "utf-8"))
             b64encoded_string = b64encode(hashed_obj.digest()).decode(encoding="UTF-8")
-            print(b64encoded_string)
-            if b64encoded_string == self.code_challenge:
-                return True
-            else:
-                return False
 
+            return b64encoded_string == self.code_challenge
 
-    # TODO: double check secrets is a safe enough library
-    def generate_auth_code(self):
-        len_code = 40
-        code = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(len_code))
-        return code
+    def generate_code(self):
+        """Generates an authorization code"""
 
+        return "".join(
+            secrets.choice(string.ascii_letters + string.digits)
+            for _ in range(CODE_LENGTH)
+        )
 
-    def is_expired(self):
-        # TODO: double check this works in testing
-        if self.expires_at > utc_now:
-            return True
-        else:
-            return False
+    def has_expired(self):
+        """Check if the authorization code has expired"""
 
-
-
+        return self.auth_time + CODE_LIFE < time.time()
