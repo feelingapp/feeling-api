@@ -14,7 +14,6 @@ load_dotenv()
 
 # Connect to database
 database_url = os.environ["DATABASE_URL"]
-print(database_url)
 database = create_engine(database_url)
 
 # Create tables if they do not exist
