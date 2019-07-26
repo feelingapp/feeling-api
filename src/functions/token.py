@@ -1,4 +1,3 @@
-import json
 import os
 from datetime import datetime, timedelta
 
@@ -42,7 +41,7 @@ authorization_code_grant_schema = {}
 
 @validate(authorization_code_grant_schema)
 def authorization_code_grant(event, session):
-    body = json.loads(event["body"])
+    body = event["body"]
 
     code = body["code"]
     code_verifier = body["code_verifier"]

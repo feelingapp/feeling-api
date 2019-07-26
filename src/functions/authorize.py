@@ -1,4 +1,3 @@
-import json
 import os
 import re
 from urllib import parse
@@ -50,7 +49,7 @@ sign_in_schema = {
 @validate(sign_in_schema)
 @database
 def sign_in(event, context, session, register=False):
-    body = json.loads(event["body"])
+    body = event["body"]
 
     email = body["email"]
     password = body["password"]

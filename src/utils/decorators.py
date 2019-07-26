@@ -48,7 +48,11 @@ def validate(schema):
 
     def decorator(function):
         def wrap_function(*args):
-            event = json.loads(args[0])
+            event = args[0]
+            
+            # Convert body from string to JSON
+            if event["headers"].get("Content-Type") == "application/json":
+                event["body"] = json.loads(event["body"])
 
             # Create JSON schema validator
             validator = Draft4Validator(schema)
