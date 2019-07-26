@@ -10,8 +10,6 @@ from src.models import AuthorizationCode, Client, User
 from src.utils.decorators import database, validate
 
 STATE_LENGTH = 10
-AUTHORIZATION_CODE_EXPIRY_TIME = 3600
-CODE_CHALLENGE_METHOD = "SHA256"
 
 sign_in_schema = {
     "type": "object",
@@ -76,7 +74,7 @@ def sign_in(event, context, session, register=False):
             },
         }
 
-    if code_challenge_method != CODE_CHALLENGE_METHOD:
+    if code_challenge_method != AuthorizationCode.CODE_CHALLENGE_METHOD:
         return {
             "statusCode": 400,
             "body": {

@@ -18,6 +18,7 @@ class AuthorizationCode(BaseModel):
 
     CODE_LENGTH = 48
     CODE_LIFE = 300
+    CODE_CHALLENGE_METHOD = "SHA256"
 
     code = Column(String(CODE_LENGTH), nullable=False, unique=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
