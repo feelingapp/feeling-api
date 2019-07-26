@@ -7,6 +7,7 @@ from hashlib import sha256
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression
 
 from src.models import BaseModel
@@ -23,6 +24,8 @@ class AuthorizationCode(BaseModel):
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
     code_challenge = Column(String, nullable=False)
     code_challenge_method = Column(String, nullable=False)
+
+    client = relationship("Client")
 
     def __init__(self, user_id, client_id, code_challenge, code_challenge_method):
         self.code = self.generate_code()

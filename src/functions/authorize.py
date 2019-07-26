@@ -147,7 +147,7 @@ def sign_in(event, context, session, register=False):
             },
         }
 
-    user = session.query(User).filter(User.email == email).first()
+    user = session.query(User).filter_by(email=email).first()
 
     if register:
         if user and user.verified:

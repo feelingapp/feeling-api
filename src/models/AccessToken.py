@@ -13,9 +13,11 @@ class AccessToken:
     def __init__(self, user_id):
         expires_in = int(time.time()) + self.TOKEN_LIFE
 
-        payload = {"sub": user_id, "exp": expires_in}
+        payload = {"sub": str(user_id), "exp": expires_in}
 
-        self.token = jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256")
+        self.token = jwt.encode(
+            payload, os.getenv("SECRET_KEY"), algorithm="HS256"
+        ).decode("utf-8")
 
     @staticmethod
     def has_expired(self, token):

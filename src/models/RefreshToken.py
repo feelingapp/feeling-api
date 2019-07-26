@@ -28,8 +28,10 @@ class RefreshToken(BaseModel):
     def __init__(self, user_id, client_id):
         self.user_id = user_id
         self.client_id = client_id
-        self.token = self.generate_token()
-        self.token_hash = RefreshToken.hash_token(self.token)
+
+        # TODO: temporary solution, need to generate token before database entry
+        self.token_hash = ""
+        # self.token_hash = RefreshToken.hash_token(self.token)
 
     def __repr__(self):
         return "<RefreshToken(id='{}', token_hash='{}', user_id='{}', client_id='{}', created_at='{}', updated_at='{}')>".format(
@@ -46,9 +48,10 @@ class RefreshToken(BaseModel):
         return self.created_at.timestamp() + self.TOKEN_LIFE
 
     def generate_token(self):
-        payload = {"user_id": self.user_id, "expiry_time": str(self.expires_in)}
-
-        self.token = jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256")
+        payload = {"user_id": str(self.user_id), "expiry_time": self.expires_in}
+        self.token = jwt.encode(
+            payload, os.getenv("SECRET_KEY"), algorithm="HS256"
+        ).decode("utf-8")
 
     @staticmethod
     def hash_token(unhashed_token):
