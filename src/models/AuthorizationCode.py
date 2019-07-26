@@ -23,6 +23,7 @@ class AuthorizationCode(BaseModel):
     code = Column(String(CODE_LENGTH), nullable=False, unique=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
+    issue_time = Column(Integer, nullable=False, default=lambda: int(time.time()))
     code_challenge = Column(String, nullable=False)
     code_challenge_method = Column(String, nullable=False)
 
@@ -36,11 +37,12 @@ class AuthorizationCode(BaseModel):
         self.code_challenge_method = code_challenge_method
 
     def __repr__(self):
-        return "<AuthorizationCode(id='{}', code='{}', user_id='{}', client_id='{}', code_challenge='{}', code_challenge_method='{}', created_at='{}', updated_at='{}')>".format(
+        return "<AuthorizationCode(id='{}', code='{}', user_id='{}', client_id='{}', issue_time='{}', code_challenge='{}', code_challenge_method='{}', created_at='{}', updated_at='{}')>".format(
             self.id,
             self.code,
             self.user_id,
             self.client_id,
+            self.issue_time,
             self.code_challenge,
             self.code_challenge_method,
             self.created_at,
@@ -49,7 +51,7 @@ class AuthorizationCode(BaseModel):
 
     @property
     def expires_in(self):
-        return self.created_at.timestamp() + self.CODE_LIFE
+        return self.issue_time + self.CODE_LIFE
 
     # TODO: test and verify this is the right way to do this
     def verify_code_challenge(self, verifier):
@@ -72,4 +74,4 @@ class AuthorizationCode(BaseModel):
     def has_expired(self):
         """Check if the authorization code has expired"""
 
-        return self.created_at.timestamp() + self.CODE_LIFE < time.time()
+        return self.issue_time + self.CODE_LIFE < time.time()

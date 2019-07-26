@@ -126,16 +126,10 @@ def authorization_code_grant(event, session):
 
     access_token = AccessToken(authorization_code.user_id)
 
-    # TODO: don't always refresh the refresh token when getting a new access token
     refresh_token = RefreshToken(
         authorization_code.user_id, authorization_code.client_id
     )
     session.add(refresh_token)
-    session.commit()
-
-    # TODO: temporary solution - (created_at generated on db insert) needed to
-    # generate_token so 2 database requests currently made
-    refresh_token.generate_token()
     session.commit()
 
     return {
@@ -198,14 +192,8 @@ def refresh_token_grant(client_params, session):
 
     access_token = AccessToken(db_refresh_token.user_id)
 
-    # TODO: don't always refresh the refresh token when getting a new access token
     refresh_token = RefreshToken(db_refresh_token.user_id, db_refresh_token.client_id)
     session.add(refresh_token)
-    session.commit()
-
-    # TODO: temporary solution - (created_at generated on db insert) needed to
-    # generate_token so 2 database requests currently made
-    refresh_token.generate_token()
     session.commit()
 
     return {

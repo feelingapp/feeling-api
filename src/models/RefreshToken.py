@@ -6,7 +6,7 @@ import time
 from hashlib import sha256
 
 from argon2 import PasswordHasher
-from sqlalchemy import Column, DateTime, ForeignKey, String
+from sqlalchemy import Column, DateTime, ForeignKey, String, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import expression
@@ -22,21 +22,22 @@ class RefreshToken(BaseModel):
 
     token = None
     token_hash = Column(String, nullable=False, unique=True)
+    issue_time = Column(Integer, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
 
     def __init__(self, user_id, client_id):
+        self.issue_time = int(time.time())
+        self.token = self.generate_token()
+        self.token_hash = RefreshToken.hash_token(self.token)
         self.user_id = user_id
         self.client_id = client_id
 
-        # TODO: temporary solution, need to generate token before database entry
-        self.token_hash = ""
-        # self.token_hash = RefreshToken.hash_token(self.token)
-
     def __repr__(self):
-        return "<RefreshToken(id='{}', token_hash='{}', user_id='{}', client_id='{}', created_at='{}', updated_at='{}')>".format(
+        return "<RefreshToken(id='{}', token_hash='{}', issue_time='{}', user_id='{}', client_id='{}', created_at='{}', updated_at='{}')>".format(
             self.id,
             self.token_hash,
+            self.issue_time,
             self.user_id,
             self.client_id,
             self.created_at,
@@ -45,13 +46,14 @@ class RefreshToken(BaseModel):
 
     @property
     def expires_in(self):
-        return self.created_at.timestamp() + self.TOKEN_LIFE
+        return self.issue_time + self.TOKEN_LIFE
 
     def generate_token(self):
         payload = {"user_id": str(self.user_id), "expiry_time": self.expires_in}
-        self.token = jwt.encode(
-            payload, os.getenv("SECRET_KEY"), algorithm="HS256"
-        ).decode("utf-8")
+
+        return jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256").decode(
+            "utf-8"
+        )
 
     @staticmethod
     def hash_token(unhashed_token):
@@ -67,4 +69,4 @@ class RefreshToken(BaseModel):
     def has_expired(self):
         """Check if the refresh token has expired"""
 
-        return self.created_at.timestamp() + self.TOKEN_LIFE < time.time()
+        return self.issue_time + self.TOKEN_LIFE < time.time()
