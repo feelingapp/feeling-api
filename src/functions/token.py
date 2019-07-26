@@ -7,7 +7,16 @@ from src.models import AccessToken, AuthorizationCode, RefreshToken
 from src.utils.decorators import database, validate
 
 # TODO: finish schema
-schema = {}
+schema = {
+    "type": "object",
+    "properties": {
+        "body": {
+            "type": "object",
+            "properties": {"grant_type": {"type": "string"}},
+            "required": ["grant_type"],
+        }
+    },
+}
 
 
 @validate(schema)
@@ -35,8 +44,21 @@ def token(event, context, session):
     }
 
 
-# TODO: finish schema
-authorization_code_grant_schema = {}
+authorization_code_grant_schema = {
+    "type": "object",
+    "properties": {
+        "body": {
+            "type": "object",
+            "properties": {
+                "code": {"type": "string"},
+                "code_verifier": {"type": "string"},
+                "redirect_uri": {"type": "string"},
+                "client_id": {"type": "string"},
+            },
+            "required": ["grant_type", "code_verifier", "redirect_uri", "client_id"],
+        }
+    },
+}
 
 
 @validate(authorization_code_grant_schema)
@@ -126,7 +148,16 @@ def authorization_code_grant(event, session):
     }
 
 
-refresh_token_grant_schema = {}
+refresh_token_grant_schema = {
+    "type": "object",
+    "properties": {
+        "body": {
+            "type": "object",
+            "properties": {"refresh_token": {"type": "string"}},
+            "required": ["refresh_token"],
+        }
+    },
+}
 
 
 @validate(refresh_token_grant_schema)
