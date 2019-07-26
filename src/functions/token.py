@@ -6,7 +6,6 @@ import jwt
 from src.models import AccessToken, AuthorizationCode, RefreshToken
 from src.utils.decorators import database, validate
 
-# TODO: finish schema
 schema = {
     "type": "object",
     "properties": {
