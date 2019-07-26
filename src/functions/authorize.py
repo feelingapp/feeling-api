@@ -22,9 +22,11 @@ sign_in_schema = {
                 "email": {"type": "string"},
                 "password": {"type": "string"},
                 "response_type": {"type": "string"},
+                "client_id": {"type": "string"},
                 "redirect_uri": {"type": "string"},
                 "code_challenge_method": {"type": "string"},
                 "code_challenge": {"type": "string"},
+                "code_challenge_token": {"type": "string"},
                 "state": {
                     "type": "string",
                     "minLength": STATE_LENGTH,
@@ -34,11 +36,12 @@ sign_in_schema = {
             "required": [
                 "email",
                 "password",
-                "client_id",
                 "response_type",
+                "client_id",
                 "redirect_uri",
                 "code_challenge_method",
                 "code_challenge",
+                "code_challenge_token",
                 "state",
             ],
         }
@@ -53,8 +56,6 @@ def sign_in(event, context, session, register=False):
 
     email = body["email"]
     password = body["password"]
-    first_name = body["first_name"]
-    last_name = body["last_name"]
     client_id = body["client_id"]
     response_type = body["response_type"]
     redirect_uri = body["redirect_uri"]
@@ -161,6 +162,9 @@ def sign_in(event, context, session, register=False):
                     ]
                 },
             }
+
+        first_name = body["first_name"]
+        last_name = body["last_name"]
 
         # Create a new account
         user = User(email, password, first_name, last_name)

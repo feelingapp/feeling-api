@@ -19,3 +19,4 @@ class Client(BaseModel):
         return "<Client(id='{}', name='{}', redirect_uri='{}' created_at='{}', updated_at='{}')>".format(
             self.id, self.name, self.redirect_uri, self.created_at, self.updated_at
         )
+
