@@ -210,7 +210,6 @@ def sign_in(event, context, session, register=False):
         "body": {
             "authorization_code": authorization_code.code,
             "expires_in": authorization_code.expires_in,
-            "redirect_uri": redirect_uri,
         },
     }
 
