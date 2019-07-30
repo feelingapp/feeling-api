@@ -163,6 +163,7 @@ refresh_token_grant_schema = {
 def refresh_token_grant(event, session):
     body = event["body"]
 
+    refresh_token = body["refresh_token"]
     state = body["state"]
 
     hashed_refresh_token = RefreshToken.hash_token(refresh_token)
@@ -209,6 +210,8 @@ def refresh_token_grant(event, session):
         "statusCode": 200,
         "body": {
             "access_token": access_token.token,
+            "expires_in": access_token.expires_in,
+            "token_type": "bearer",
             "refresh_token": refresh_token.token,
             "state": state,
         },
