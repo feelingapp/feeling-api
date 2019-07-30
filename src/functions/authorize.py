@@ -4,7 +4,6 @@ from urllib import parse
 from urllib.parse import urlencode
 
 import jwt
-from sqlalchemy.orm import mapper
 
 from src.models import AuthorizationCode, Client, User
 from src.utils.decorators import database, validate
@@ -60,6 +59,7 @@ def sign_in(event, context, session, register=False):
     code_challenge_method = body["code_challenge_method"]
     code_challenge = body["code_challenge"]
     code_challenge_token = body["code_challenge_token"]
+    state = body["state"]
 
     if response_type != "code":
         return {
@@ -91,6 +91,19 @@ def sign_in(event, context, session, register=False):
         token_payload = jwt.decode(
             code_challenge_token, os.getenv("SECRET_KEY"), algorithms=["HS256"]
         )
+
+        if not token_payload["code_challenge"] == code_challenge:
+            return {
+                "statusCode": 400,
+                "body": {
+                    "errors": [
+                        {
+                            "type": "incorrect_code_challenge",
+                            "message": "The code_challenge is incorrect",
+                        }
+                    ]
+                },
+            }
     except:
         return {
             "statusCode": 400,
@@ -99,19 +112,6 @@ def sign_in(event, context, session, register=False):
                     {
                         "type": "invalid_code_challenge_token",
                         "message": "The code challenge token is invalid",
-                    }
-                ]
-            },
-        }
-
-    if not token_payload["code_challenge"] == code_challenge:
-        return {
-            "statusCode": 400,
-            "body": {
-                "errors": [
-                    {
-                        "type": "incorrect_code_challenge",
-                        "message": "The code_challenge is incorrect",
                     }
                 ]
             },
@@ -210,6 +210,7 @@ def sign_in(event, context, session, register=False):
         "body": {
             "authorization_code": authorization_code.code,
             "expires_in": authorization_code.expires_in,
+            "state": state,
         },
     }
 

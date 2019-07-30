@@ -1,8 +1,6 @@
 import os
 from datetime import datetime, timedelta
 
-import jwt
-
 from src.models import AccessToken, AuthorizationCode, RefreshToken
 from src.utils.decorators import database, validate
 
@@ -11,8 +9,11 @@ schema = {
     "properties": {
         "body": {
             "type": "object",
-            "properties": {"grant_type": {"type": "string"}},
-            "required": ["grant_type"],
+            "properties": {
+                "grant_type": {"type": "string"},
+                "state": {"type": "string"},
+            },
+            "required": ["grant_type", "state"],
         }
     },
 }
@@ -68,10 +69,10 @@ def authorization_code_grant(event, session):
     code_verifier = body["code_verifier"]
     redirect_uri = body["redirect_uri"]
     client_id = body["client_id"]
+    state = body["state"]
 
     authorization_code = session.query(AuthorizationCode).filter_by(code=code).first()
 
-    # TODO: fix things
     if not authorization_code:
         return {
             "statusCode": 400,
@@ -129,6 +130,8 @@ def authorization_code_grant(event, session):
     refresh_token = RefreshToken(
         authorization_code.user_id, authorization_code.client_id
     )
+
+    session.delete(authorization_code)
     session.add(refresh_token)
     session.commit()
 
@@ -136,7 +139,10 @@ def authorization_code_grant(event, session):
         "statusCode": 200,
         "body": {
             "access_token": access_token.token,
+            "expires_in": access_token.expires_in,
+            "token_type": "bearer",
             "refresh_token": refresh_token.token,
+            "state": state,
         },
     }
 
@@ -152,10 +158,13 @@ refresh_token_grant_schema = {
     },
 }
 
-
+# TODO: Figure out reissuing refresh tokens
 @validate(refresh_token_grant_schema)
-def refresh_token_grant(client_params, session):
-    refresh_token = client_params["refresh_token"]
+def refresh_token_grant(event, session):
+    body = event["body"]
+
+    state = body["state"]
+
     hashed_refresh_token = RefreshToken.hash_token(refresh_token)
 
     db_refresh_token = (
@@ -201,5 +210,6 @@ def refresh_token_grant(client_params, session):
         "body": {
             "access_token": access_token.token,
             "refresh_token": refresh_token.token,
+            "state": state,
         },
     }
