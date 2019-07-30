@@ -9,6 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from urllib import parse
 
+from src.models import AccessToken
+
 
 def database(function):
     """Decorator to help connect to a database"""
@@ -92,13 +94,23 @@ def token_required(function):
 
         if authorization:
             token = authorization.split("Bearer ")[1]
+            access_token = AccessToken(token)
 
-            # TODO: check if token is expired
-
-            # TODO: parse token
-            user_id = None
+            if access_token.has_expired:
+                return {
+                    "statusCode": 401,
+                    "body": {
+                        "errors": [
+                            {
+                                "type": "access_token_expired",
+                                "message": "The access token has expired",
+                            }
+                        ]
+                    },
+                }
 
             # Add user ID to event argument
+            user_id = access_token.payload["sub"]
             new_event = {**event, "user_id": user_id}
             args = (new_event, *args[1:])
 

@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 
 from src.models import AccessToken, AuthorizationCode, RefreshToken
-from src.utils.decorators import database, validate
+from src.utils.decorators import database, validate, token_required
 
 schema = {
     "type": "object",
@@ -159,6 +159,7 @@ refresh_token_grant_schema = {
 }
 
 # TODO: Figure out reissuing refresh tokens
+@token_required
 @validate(refresh_token_grant_schema)
 def refresh_token_grant(event, session):
     body = event["body"]
