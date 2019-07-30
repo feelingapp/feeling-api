@@ -51,7 +51,7 @@ class AuthorizationCode(BaseModel):
 
     @property
     def expires_in(self):
-        return self.issue_time + self.CODE_LIFE
+        return self.CODE_LIFE
 
     # TODO: test and verify this is the right way to do this
     def verify_code_challenge(self, verifier):

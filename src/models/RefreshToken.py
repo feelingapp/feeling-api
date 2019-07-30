@@ -46,7 +46,7 @@ class RefreshToken(BaseModel):
 
     @property
     def expires_in(self):
-        return self.issue_time + self.TOKEN_LIFE
+        return self.TOKEN_LIFE
 
     def generate_token(self):
         payload = {"user_id": str(self.user_id), "expiry_time": self.expires_in}

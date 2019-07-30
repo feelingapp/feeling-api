@@ -19,6 +19,10 @@ class AccessToken:
             payload, os.getenv("SECRET_KEY"), algorithm="HS256"
         ).decode("utf-8")
 
+    @property
+    def expires_in(self):
+        return self.TOKEN_LIFE
+
     @staticmethod
     def has_expired(self, token):
         payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithm="HS256")
