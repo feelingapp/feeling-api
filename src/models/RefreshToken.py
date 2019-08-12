@@ -6,18 +6,12 @@ import time
 from hashlib import sha256
 
 from argon2 import PasswordHasher
-from sqlalchemy import (
-    Column,
-    DateTime,
-    ForeignKey,
-    String,
-    Integer,
-)
+from sqlalchemy import Column, DateTime, ForeignKey, String, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import expression
 
-from src.models import BaseModel
+from src.models import BaseModel, AccessToken
 
 
 class RefreshToken(BaseModel):
@@ -26,31 +20,18 @@ class RefreshToken(BaseModel):
     # Equivalent to 14 days in seconds
     TOKEN_LIFE = 14 * 24 * 60 * 60
 
-    # Equivalent to 30 minutes in seconds
-    ACCESS_TOKEN_LIFE = 30 * 60
-
-    CODE_LENGTH = 15
+    TOKEN_LENGTH = 60
 
     token = None
     token_hash = Column(String, nullable=False, unique=True)
     issue_time = Column(Integer, nullable=False)
-    user_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("users.id"),
-        nullable=False,
-    )
-    client_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("clients.id"),
-        nullable=False,
-    )
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
 
     def __init__(self, user_id, client_id):
         self.issue_time = int(time.time())
         self.expires_in = self.issue_time + self.TOKEN_LIFE
-        self.valid_from = (
-            self.issue_time + self.ACCESS_TOKEN_LIFE
-        )
+        self.valid_from = self.issue_time + AccessToken.TOKEN_LIFE
         self.token = self.generate_token()
         self.token_hash = self.hash_token(self.token)
         self.user_id = user_id
@@ -72,17 +53,15 @@ class RefreshToken(BaseModel):
         return self.TOKEN_LIFE
 
     def generate_token(self):
-        """Generates a random string of length CODE_LENGTH"""
+        """Generates a random string of length TOKEN_LENGTH"""
 
         # TODO: check whether this should be changed to a UUID or whether to be replaced with something different
         return "".join(
-            secrets.choice(
-                string.ascii_letters + string.digits
-            )
-            for _ in range(self.CODE_LENGTH)
+            secrets.choice(string.ascii_letters + string.digits)
+            for _ in range(self.TOKEN_LENGTH)
         )
 
-    def generate_JWT(self):
+    def generate_jwt(self):
         """Creates a JWT for the client"""
         payload = {
             "token": self.token,
@@ -90,11 +69,9 @@ class RefreshToken(BaseModel):
             "valid_from": self.valid_from,
         }
 
-        return jwt.encode(
-            payload,
-            os.getenv("SECRET_KEY"),
-            algorithm="HS256",
-        ).decode("utf-8")
+        return jwt.encode(payload, os.getenv("SECRET_KEY"), algorithm="HS256").decode(
+            "utf-8"
+        )
 
     @staticmethod
     def hash_token(unhashed_token):
@@ -110,6 +87,4 @@ class RefreshToken(BaseModel):
     def has_expired(self):
         """Check if the refresh token has expired"""
 
-        return (
-            self.issue_time + self.TOKEN_LIFE
-        ) < time.time()
+        return (self.issue_time + self.TOKEN_LIFE) < time.time()

@@ -3,16 +3,8 @@ import time
 from datetime import datetime, timedelta
 import jwt
 
-from src.models import (
-    AccessToken,
-    AuthorizationCode,
-    RefreshToken,
-)
-from src.utils.decorators import (
-    database,
-    validate,
-    token_required,
-)
+from src.models import AccessToken, AuthorizationCode, RefreshToken
+from src.utils.decorators import database, validate, token_required
 
 schema = {
     "type": "object",
@@ -65,12 +57,7 @@ authorization_code_grant_schema = {
                 "redirect_uri": {"type": "string"},
                 "client_id": {"type": "string"},
             },
-            "required": [
-                "grant_type",
-                "code_verifier",
-                "redirect_uri",
-                "client_id",
-            ],
+            "required": ["grant_type", "code_verifier", "redirect_uri", "client_id"],
         }
     },
 }
@@ -86,11 +73,7 @@ def authorization_code_grant(event, session):
     client_id = body["client_id"]
     state = body["state"]
 
-    authorization_code = (
-        session.query(AuthorizationCode)
-        .filter_by(code=code)
-        .first()
-    )
+    authorization_code = session.query(AuthorizationCode).filter_by(code=code).first()
 
     if not authorization_code:
         return {
@@ -118,10 +101,7 @@ def authorization_code_grant(event, session):
             },
         }
 
-    if (
-        not redirect_uri
-        == authorization_code.client.redirect_uri
-    ):
+    if not redirect_uri == authorization_code.client.redirect_uri:
         return {
             "statusCode": 401,
             "body": {
@@ -134,9 +114,7 @@ def authorization_code_grant(event, session):
             },
         }
 
-    if not authorization_code.verify_code_challenge(
-        code_verifier
-    ):
+    if not authorization_code.verify_code_challenge(code_verifier):
         return {
             "statusCode": 400,
             "body": {
@@ -152,8 +130,7 @@ def authorization_code_grant(event, session):
     access_token = AccessToken(authorization_code.user_id)
 
     refresh_token = RefreshToken(
-        authorization_code.user_id,
-        authorization_code.client_id,
+        authorization_code.user_id, authorization_code.client_id
     )
 
     session.delete(authorization_code)
@@ -166,7 +143,7 @@ def authorization_code_grant(event, session):
             "access_token": access_token.token,
             "expires_in": access_token.expires_in,
             "token_type": "bearer",
-            "refresh_token": refresh_token.generate_JWT(),
+            "refresh_token": refresh_token.generate_jwt(),
             "state": state,
         },
     }
@@ -177,13 +154,12 @@ refresh_token_grant_schema = {
     "properties": {
         "body": {
             "type": "object",
-            "properties": {
-                "refresh_token": {"type": "string"}
-            },
+            "properties": {"refresh_token": {"type": "string"}},
             "required": ["refresh_token"],
         }
     },
 }
+
 
 @token_required
 @validate(refresh_token_grant_schema)
@@ -194,19 +170,16 @@ def refresh_token_grant(event, session):
 
     try:
         token_payload = jwt.decode(
-            refresh_token,
-            os.getenv("SECRET_KEY"),
-            algorithms=["HS256"],
+            refresh_token, os.getenv("SECRET_KEY"), algorithms=["HS256"]
         )
-
     except:
         return {
             "statusCode": 400,
             "body": {
                 "errors": [
                     {
-                        "type": "invalid refresh_token",
-                        "message": "The refresh_token failed JWT verification",
+                        "type": "invalid_refresh_token",
+                        "message": "The refresh token is invalid",
                     }
                 ]
             },
@@ -220,8 +193,8 @@ def refresh_token_grant(event, session):
             "body": {
                 "errors": [
                     {
-                        "type": "refresh token not ready for use",
-                        "message": "The refresh_token cannot be used until it's corresponding access token has expired",
+                        "type": "refresh_token_not_ready",
+                        "message": "The refresh token in only ready to use once it's corresponding access token has expired",
                     }
                 ]
             },
@@ -235,26 +208,20 @@ def refresh_token_grant(event, session):
             "body": {
                 "errors": [
                     {
-                        "type": "refresh token has expired",
-                        "message": "The refresh_token cannot be used as it's expired, if you want another you must"
-                        "gain another authentication code ",
+                        "type": "expired_refresh_token",
+                        "message": "The refresh_token has expired"
                     }
                 ]
             },
         }
 
-    hashed_refresh_token = RefreshToken.hash_token(
-        token_payload["token"]
-    )
+    hashed_refresh_token = RefreshToken.hash_token(token_payload["token"])
 
     db_refresh_token = (
-        session.query(RefreshToken)
-        .filter_by(token_hash=hashed_refresh_token)
-        .first()
+        session.query(RefreshToken).filter_by(token_hash=hashed_refresh_token).first()
     )
 
     if not db_refresh_token:
-        # TODO: put in error logging here, this should never happen and if so it could mean our key has been compromised
         return {
             "statusCode": 400,
             "body": {
@@ -268,7 +235,6 @@ def refresh_token_grant(event, session):
         }
 
     if db_refresh_token.has_expired():
-        # TODO: put in error logging here, this should never happen and if so it could mean our key has been compromised
         return {
             "statusCode": 401,
             "body": {
@@ -280,12 +246,11 @@ def refresh_token_grant(event, session):
                 ]
             },
         }
+
     session.delete(db_refresh_token)
 
     access_token = AccessToken(db_refresh_token.user_id)
-    refresh_token = RefreshToken(
-        db_refresh_token.user_id, db_refresh_token.client_id
-    )
+    refresh_token = RefreshToken(db_refresh_token.user_id, db_refresh_token.client_id)
     session.add(refresh_token)
     session.commit()
 
@@ -295,6 +260,6 @@ def refresh_token_grant(event, session):
             "access_token": access_token.token,
             "expires_in": access_token.expires_in,
             "token_type": "bearer",
-            "refresh_token": refresh_token.generate_JWT(),
+            "refresh_token": refresh_token.generate_jwt(),
         },
     }
