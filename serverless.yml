@@ -95,18 +95,18 @@ functions:
           method: post
           cors: true
 
-  account_exists:
-    handler: src/functions/account.exists
-    events:
-      - http:
-          path: /account/exists
-          method: get
-          cors: true
-
   token:
     handler: src/functions/token.token
     events:
       - http:
           path: /token
           method: post
+          cors: true
+
+  account_exists:
+    handler: src/functions/account.exists
+    events:
+      - http:
+          path: /account/exists
+          method: get
           cors: true
