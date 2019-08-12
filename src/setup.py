@@ -7,13 +7,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.consts import Emotion
-from src.models import Base, User, Client, Emotion as EmotionTable
+from src.models import Base, User, Emotion as EmotionTable
 
 # Set environment variables from .env
 load_dotenv()
 
 # Connect to database
-database_url = os.environ["DATABASE_URL"]
+database_url = os.getenv("DATABASE_URL")
 database = create_engine(database_url)
 
 # Create tables if they do not exist
@@ -42,9 +42,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "--generate-data":
             )
             user.verified = mock_user["verified"]
             session.add(user)
-
-    client = Client("Android app", "*")
-    session.add(client)
 
 # Finish and close session
 session.commit()
