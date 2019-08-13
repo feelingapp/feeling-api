@@ -23,7 +23,6 @@ sign_in_schema = {
                 "redirect_uri": {"type": "string"},
                 "code_challenge_method": {"type": "string"},
                 "code_challenge": {"type": "string"},
-                "code_challenge_token": {"type": "string"},
                 "state": {
                     "type": "string",
                     "minLength": STATE_LENGTH,
@@ -38,7 +37,6 @@ sign_in_schema = {
                 "redirect_uri",
                 "code_challenge_method",
                 "code_challenge",
-                "code_challenge_token",
                 "state",
             ],
         }
@@ -58,7 +56,6 @@ def sign_in(event, context, session, register=False):
     redirect_uri = body["redirect_uri"]
     code_challenge_method = body["code_challenge_method"]
     code_challenge = body["code_challenge"]
-    code_challenge_token = body["code_challenge_token"]
     state = body["state"]
 
     if response_type != "code":
@@ -82,36 +79,6 @@ def sign_in(event, context, session, register=False):
                     {
                         "type": "invalid_code_challenge_method",
                         "message": "Only SHA256 is supported for the code challenge method",
-                    }
-                ]
-            },
-        }
-
-    try:
-        token_payload = jwt.decode(
-            code_challenge_token, os.getenv("SECRET_KEY"), algorithms=["HS256"]
-        )
-
-        if not token_payload["code_challenge"] == code_challenge:
-            return {
-                "statusCode": 400,
-                "body": {
-                    "errors": [
-                        {
-                            "type": "incorrect_code_challenge",
-                            "message": "The code_challenge is incorrect",
-                        }
-                    ]
-                },
-            }
-    except:
-        return {
-            "statusCode": 400,
-            "body": {
-                "errors": [
-                    {
-                        "type": "invalid_code_challenge_token",
-                        "message": "The code challenge token is invalid",
                     }
                 ]
             },
