@@ -106,7 +106,7 @@ def sign_in(event, context, session, register=False):
                 "errors": [
                     {
                         "type": "invalid_redirect_uri",
-                        "message": "The redirect_uri was not found",
+                        "message": "The redirect URI was not found",
                     }
                 ]
             },

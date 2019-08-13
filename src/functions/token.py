@@ -209,7 +209,7 @@ def refresh_token_grant(event, session):
                 "errors": [
                     {
                         "type": "expired_refresh_token",
-                        "message": "The refresh_token has expired"
+                        "message": "The refresh token has expired",
                     }
                 ]
             },
