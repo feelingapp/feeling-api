@@ -61,7 +61,7 @@ Used internally by [feeling-website](https://github.com/pavsidhu/feeling-website
   "client_id": "0oabygpxgk9lXaMgF0h7",
   "response_type": "code",
   "redirect_uri": "myapp://callback",
-  "code_challenge_method": "S256",
+  "code_challenge_method": "SHA256",
   "code_challenge": "qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es",
   "state": "ahg84hek2n",
   "email": "michael_lee@gmail.com",
