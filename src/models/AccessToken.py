@@ -10,10 +10,7 @@ class AccessToken:
 
     token = None
 
-    def __init__(self, token):
-        self.token = token
-
-    def build(self, user_id):
+    def __init__(self, user_id):
         expires_in = int(time.time()) + self.TOKEN_LIFE
 
         payload = {"sub": str(user_id), "exp": expires_in}

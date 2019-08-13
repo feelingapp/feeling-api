@@ -24,13 +24,14 @@ class RefreshToken(BaseModel):
 
     token = None
     token_hash = Column(String, nullable=False, unique=True)
-    issue_time = Column(Integer, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     client_id = Column(UUID(as_uuid=True), ForeignKey("clients.id"), nullable=False)
+    issue_time = Column(Integer, nullable=False)
+    expiry_time = None
 
     def __init__(self, user_id, client_id):
         self.issue_time = int(time.time())
-        self.expires_in = self.issue_time + self.TOKEN_LIFE
+        self.expiry_time = self.issue_time + self.TOKEN_LIFE
         self.valid_from = self.issue_time + AccessToken.TOKEN_LIFE
         self.token = self.generate_token()
         self.token_hash = self.hash_token(self.token)
@@ -65,7 +66,7 @@ class RefreshToken(BaseModel):
         """Creates a JWT for the client"""
         payload = {
             "token": self.token,
-            "expiry_time": self.expires_in,
+            "expiry_time": self.expiry_time,
             "valid_from": self.valid_from,
         }
 
