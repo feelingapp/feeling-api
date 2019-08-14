@@ -18,7 +18,7 @@ sign_in_schema = {
                     "type": "string",
                     "pattern": r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
                 },
-                "password": {"type": "string", "minLength": 8},
+                "password": {"type": "string"},
                 "response_type": {"type": "string"},
                 "client_id": {"type": "string"},
                 "redirect_uri": {"type": "string"},
@@ -51,23 +51,6 @@ def sign_in(event, context, session, register=False):
     redirect_uri = body["redirect_uri"]
     code_challenge_method = body["code_challenge_method"]
     code_challenge = body["code_challenge"]
-
-    if not (
-        any(map(str.isdigit, password))
-        and any(map(str.islower, password))
-        and any(map(str.isupper, password))
-    ):
-        return {
-            "statusCode": 400,
-            "body": {
-                "errors": [
-                    {
-                        "type": "valildation_error",
-                        "message": "The password must contain a number, a lowercase letter and an uppercase letter",
-                    }
-                ]
-            },
-        }
 
     if response_type != "code":
         return {
@@ -200,8 +183,9 @@ register_schema = {
             "properties": {
                 "first_name": {"type": "string"},
                 "last_name": {"type": "string"},
+                "password": {"type": "string", "minLength": 8},
             },
-            "required": ["first_name", "last_name"],
+            "required": ["first_name", "last_name", "password"],
         }
     },
 }
@@ -209,4 +193,23 @@ register_schema = {
 
 @validate(register_schema)
 def register(event, context):
+    password = event["body"]["password"]
+
+    if not (
+        any(map(str.isdigit, password))
+        and any(map(str.islower, password))
+        and any(map(str.isupper, password))
+    ):
+        return {
+            "statusCode": 400,
+            "body": {
+                "errors": [
+                    {
+                        "type": "valildation_error",
+                        "message": "The password must contain a number, a lowercase letter and an uppercase letter",
+                    }
+                ]
+            },
+        }
+
     return sign_in(event, context, session=None, register=True)
