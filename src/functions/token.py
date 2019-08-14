@@ -11,11 +11,8 @@ schema = {
     "properties": {
         "body": {
             "type": "object",
-            "properties": {
-                "grant_type": {"type": "string"},
-                "state": {"type": "string"},
-            },
-            "required": ["grant_type", "state"],
+            "properties": {"grant_type": {"type": "string"}},
+            "required": ["grant_type"],
         }
     },
 }
@@ -71,7 +68,6 @@ def authorization_code_grant(event, session):
     code_verifier = body["code_verifier"]
     redirect_uri = body["redirect_uri"]
     client_id = body["client_id"]
-    state = body["state"]
 
     authorization_code = session.query(AuthorizationCode).filter_by(code=code).first()
 
@@ -151,6 +147,7 @@ def authorization_code_grant(event, session):
             "refresh_token": refresh_token.generate_jwt(),
         },
     }
+
 
 refresh_token_grant_schema = {
     "type": "object",

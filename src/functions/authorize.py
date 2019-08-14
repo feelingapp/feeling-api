@@ -8,8 +8,6 @@ import jwt
 from src.models import AuthorizationCode, Client, User
 from src.utils.decorators import database, validate
 
-STATE_LENGTH = 10
-
 sign_in_schema = {
     "type": "object",
     "properties": {
@@ -26,11 +24,6 @@ sign_in_schema = {
                 "redirect_uri": {"type": "string"},
                 "code_challenge_method": {"type": "string"},
                 "code_challenge": {"type": "string"},
-                "state": {
-                    "type": "string",
-                    "minLength": STATE_LENGTH,
-                    "maxLength": STATE_LENGTH,
-                },
             },
             "required": [
                 "email",
@@ -40,7 +33,6 @@ sign_in_schema = {
                 "redirect_uri",
                 "code_challenge_method",
                 "code_challenge",
-                "state",
             ],
         }
     },
@@ -59,7 +51,6 @@ def sign_in(event, context, session, register=False):
     redirect_uri = body["redirect_uri"]
     code_challenge_method = body["code_challenge_method"]
     code_challenge = body["code_challenge"]
-    state = body["state"]
 
     if not (
         any(map(str.isdigit, password))
@@ -197,7 +188,6 @@ def sign_in(event, context, session, register=False):
         "body": {
             "authorization_code": authorization_code.code,
             "expires_in": authorization_code.expires_in,
-            "state": state,
         },
     }
 
