@@ -65,7 +65,7 @@ def validate(schema):
             # Generate errors
             errors = [
                 {
-                    "type": "validation-error",
+                    "type": "validation_error",
                     "message": parse_error_message(error.message),
                 }
                 for error in validator.iter_errors(event)

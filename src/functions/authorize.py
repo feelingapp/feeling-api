@@ -16,9 +16,11 @@ sign_in_schema = {
         "body": {
             "type": "object",
             "properties": {
-                # TODO: regex checking for the email
-                "email": {"type": "string"},
-                "password": {"type": "string"},
+                "email": {
+                    "type": "string",
+                    "pattern": r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
+                },
+                "password": {"type": "string", "minLength": 8},
                 "response_type": {"type": "string"},
                 "client_id": {"type": "string"},
                 "redirect_uri": {"type": "string"},
@@ -58,6 +60,23 @@ def sign_in(event, context, session, register=False):
     code_challenge_method = body["code_challenge_method"]
     code_challenge = body["code_challenge"]
     state = body["state"]
+
+    if not (
+        any(map(str.isdigit, password))
+        and any(map(str.islower, password))
+        and any(map(str.isupper, password))
+    ):
+        return {
+            "statusCode": 400,
+            "body": {
+                "errors": [
+                    {
+                        "type": "valildation_error",
+                        "message": "The password must contain a number, a lowercase letter and an uppercase letter",
+                    }
+                ]
+            },
+        }
 
     if response_type != "code":
         return {
