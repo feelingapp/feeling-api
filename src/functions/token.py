@@ -127,6 +127,9 @@ def authorization_code_grant(event, session):
             },
         }
 
+    # removing any previous refresh tokens owned by the user
+    session.query(RefreshToken).filter_by(user_id=authorization_code.user_id, client_id=authorization_code.client_id).delete()
+
     access_token = AccessToken(authorization_code.user_id)
 
     refresh_token = RefreshToken(
