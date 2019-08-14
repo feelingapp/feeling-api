@@ -1,3 +1,4 @@
+from argon2.exceptions import VerifyMismatchError
 from sqlalchemy import Boolean, Column, String
 from argon2 import PasswordHasher
 
@@ -11,7 +12,7 @@ class User(BaseModel):
 
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
-    email = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
     password_hash = Column(String)
     verified = Column(Boolean, nullable=False, default=False)
 
@@ -28,8 +29,10 @@ class User(BaseModel):
 
     def verify_password(self, password):
         """Checks if a password matches with a hash"""
-
-        return password_hasher.verify(self.password_hash, password)
+        try:
+            return password_hasher.verify(self.password_hash, password)
+        except VerifyMismatchError:
+            return False
 
     def __repr__(self):
         return "<User(id='{}', first_name='{}', last_name='{}', email='{}', password_hash='{}', verified='{}', created_at='{}', updated_at='{}')>".format(

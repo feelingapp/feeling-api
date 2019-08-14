@@ -1,11 +1,15 @@
 import os
 import re
 import json
+import jsonschema
 
 from dotenv import load_dotenv
 from jsonschema import Draft4Validator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from urllib import parse
+
+from src.models import AccessToken
 
 
 def database(function):
@@ -37,7 +41,7 @@ def database(function):
 
 
 def validate(schema):
-    """Decorator to help validate the body of the event"""
+    """Decorator to help validate the body and header of the event"""
 
     def parse_error_message(message):
         """Removes escaped characters from error message"""
@@ -47,7 +51,13 @@ def validate(schema):
     def decorator(function):
         def wrap_function(*args):
             event = args[0]
-            body = json.loads(event["body"])
+
+            # Convert body from string to JSON
+            if (
+                type(event["body"]) == str
+                and event["headers"].get("Content-Type") == "application/json"
+            ):
+                event["body"] = json.loads(event["body"])
 
             # Create JSON schema validator
             validator = Draft4Validator(schema)
@@ -55,13 +65,13 @@ def validate(schema):
             # Generate errors
             errors = [
                 {
-                    "type": "validation-error",
+                    "type": "validation_error",
                     "message": parse_error_message(error.message),
                 }
-                for error in validator.iter_errors(body)
+                for error in validator.iter_errors(event)
             ]
 
-            # Return error to client if body is invalid
+            # Return error to client if event is invalid
             if errors:
                 return {"statusCode": 400, "body": {"errors": errors}}
 
@@ -74,7 +84,7 @@ def validate(schema):
 
 
 def token_required(function):
-    """Decorator handle access tokens"""
+    """Decorator to handle access tokens"""
 
     def wrap_function(*args):
         event = args[0]
@@ -84,13 +94,23 @@ def token_required(function):
 
         if authorization:
             token = authorization.split("Bearer ")[1]
+            access_token = AccessToken(token)
 
-            # TODO: check if token is expired
-
-            # TODO: parse token
-            user_id = None
+            if access_token.has_expired:
+                return {
+                    "statusCode": 401,
+                    "body": {
+                        "errors": [
+                            {
+                                "type": "access_token_expired",
+                                "message": "The access token has expired",
+                            }
+                        ]
+                    },
+                }
 
             # Add user ID to event argument
+            user_id = access_token.payload["sub"]
             new_event = {**event, "user_id": user_id}
             args = (new_event, *args[1:])
 

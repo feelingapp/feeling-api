@@ -1,17 +1,22 @@
-import json
-
 from src.consts import Emotion
 from src.models import Feeling
 from src.utils.decorators import database, token_required, validate
 
 schema = {
     "type": "object",
-    "properties": {
-        "emotion": {"type": "string", "enum": Emotion.list()},
-        "description": {"type": "string"},
-        "hashtags": {"type": "array", "items": {"type": "string"}, "uniqueItems": True},
+    "body": {
+        "type": "object",
+        "properties": {
+            "emotion": {"type": "string", "enum": Emotion.list()},
+            "description": {"type": "string"},
+            "hashtags": {
+                "type": "array",
+                "items": {"type": "string"},
+                "uniqueItems": True,
+            },
+        },
+        "required": ["emotion"],
     },
-    "required": ["emotion"],
 }
 
 
@@ -35,7 +40,7 @@ def get(event, context, session):
 @token_required
 @validate(schema)
 def post(event, context, session):
-    body = json.loads(event["body"])
+    body = event["body"]
 
     # Get feeling properties
     emotion = Emotion[body["emotion"]]
@@ -55,7 +60,7 @@ def post(event, context, session):
 @token_required
 @validate(schema)
 def put(event, context, session):
-    body = json.loads(event["body"])
+    body = event["body"]
 
     feeling_id = event["pathParameters"]["id"]
     user_id = event["user_id"]
