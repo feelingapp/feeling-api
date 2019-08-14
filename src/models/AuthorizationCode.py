@@ -1,7 +1,7 @@
 import secrets
 import string
 import time
-from base64 import b64encode
+from base64 import urlsafe_b64encode
 from hashlib import sha256
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
@@ -59,7 +59,7 @@ class AuthorizationCode(BaseModel):
             return False
 
         hashed_obj = sha256(verifier.encode())
-        b64encoded_string = b64encode(hashed_obj.digest()).decode(encoding="UTF-8")
+        b64encoded_string = urlsafe_b64encode(hashed_obj.digest()).decode(encoding="UTF-8")[:-1]
 
         return b64encoded_string == self.code_challenge
 

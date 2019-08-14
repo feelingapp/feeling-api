@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from src.models import Client
 from src.consts import Emotion
 from src.models import Base, User, Emotion as EmotionTable
 
@@ -18,6 +19,8 @@ database = create_engine(database_url)
 
 # Create tables if they do not exist
 Base.metadata.create_all(database)
+
+
 
 # Create a Session
 Session = sessionmaker(bind=database)
@@ -42,6 +45,8 @@ if len(sys.argv) > 1 and sys.argv[1] == "--generate-data":
             )
             user.verified = mock_user["verified"]
             session.add(user)
+
+
 
 # Finish and close session
 session.commit()

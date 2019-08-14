@@ -16,6 +16,7 @@ sign_in_schema = {
         "body": {
             "type": "object",
             "properties": {
+                # TODO: regex checking for the email
                 "email": {"type": "string"},
                 "password": {"type": "string"},
                 "response_type": {"type": "string"},

@@ -143,8 +143,7 @@ def authorization_code_grant(event, session):
             "access_token": access_token.token,
             "expires_in": access_token.expires_in,
             "token_type": "bearer",
-            "refresh_token": refresh_token.generate_jwt(),
-            "state": state,
+            "refresh_token": refresh_token.generate_jwt()
         },
     }
 
