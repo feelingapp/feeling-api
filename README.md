@@ -21,17 +21,30 @@ npm install
 
 3. Install Python libraries:
 
+On Unix:
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+On Windows:
+
+```bash
+python3 -m venv venv
+.\venv\scripts\activate.bat
+pip install -r requirements.txt
+```
+
+
 4. Generate the database tables:
 
 ```bash
-python -m src.setup
+python -m src.setup --generate-data
 ```
+
+Note: `--generate-data` prepopulates the database with mock data.
 
 5. To run the functions locally:
 

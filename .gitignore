@@ -22,5 +22,8 @@ node_modules
 # VSCode
 .vscode
 
+# PyCharm
+.idea
+
 # Config
 .env.production

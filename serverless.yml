@@ -16,6 +16,14 @@ provider:
   profile: feeling
 
 functions:
+  status:
+    handler: src/functions/status.get
+    events:
+      - http:
+          path: /status
+          method: get
+          cors: true
+
   get_feeling:
     handler: src/functions/feeling.get
     events:
@@ -63,10 +71,51 @@ functions:
           path: /settings
           method: get
           cors: true
+
   get_quote:
     handler: src/functions/quote.get
     events:
       - http:
           path: /quote/{emotion}
+          method: get
+          cors: true
+
+  pre_authorize:
+    handler: src/functions/pre_authorize.pre_authorize
+    events:
+      - http:
+          path: /pre-authorize
+          method: get
+          cors: true
+
+  sign_in:
+    handler: src/functions/authorize.sign_in
+    events:
+      - http:
+          path: /sign-in
+          method: post
+          cors: true
+
+  register:
+    handler: src/functions/authorize.register
+    events:
+      - http:
+          path: /register
+          method: post
+          cors: true
+
+  token:
+    handler: src/functions/token.token
+    events:
+      - http:
+          path: /token
+          method: post
+          cors: true
+
+  account_exists:
+    handler: src/functions/account.exists
+    events:
+      - http:
+          path: /account/exists
           method: get
           cors: true
