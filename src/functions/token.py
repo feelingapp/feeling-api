@@ -128,7 +128,9 @@ def authorization_code_grant(event, session):
         }
 
     # removing any previous refresh tokens owned by the user
-    session.query(RefreshToken).filter_by(user_id=authorization_code.user_id, client_id=authorization_code.client_id).delete()
+    session.query(RefreshToken).filter_by(
+        user_id=authorization_code.user_id, client_id=authorization_code.client_id
+    ).delete()
 
     access_token = AccessToken(authorization_code.user_id)
 
@@ -146,10 +148,9 @@ def authorization_code_grant(event, session):
             "access_token": access_token.token,
             "expires_in": access_token.expires_in,
             "token_type": "bearer",
-            "refresh_token": refresh_token.generate_jwt()
+            "refresh_token": refresh_token.generate_jwt(),
         },
     }
-
 
 refresh_token_grant_schema = {
     "type": "object",
@@ -265,3 +266,4 @@ def refresh_token_grant(event, session):
             "refresh_token": refresh_token.generate_jwt(),
         },
     }
+

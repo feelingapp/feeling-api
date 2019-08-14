@@ -53,13 +53,14 @@ class AuthorizationCode(BaseModel):
     def expires_in(self):
         return self.CODE_LIFE
 
-    # TODO: test and verify this is the right way to do this
     def verify_code_challenge(self, verifier):
         if self.code_challenge_method != "SHA256":
             return False
 
         hashed_obj = sha256(verifier.encode())
-        b64encoded_string = urlsafe_b64encode(hashed_obj.digest()).decode(encoding="UTF-8")[:-1]
+        b64encoded_string = urlsafe_b64encode(hashed_obj.digest()).decode(
+            encoding="UTF-8"
+        )[:-1]
 
         return b64encoded_string == self.code_challenge
 
