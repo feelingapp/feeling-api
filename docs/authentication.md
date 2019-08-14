@@ -15,6 +15,7 @@ Generate an authorization code (you should create a code verifier and code chall
 | `redirect_uri`          | `string` | **Required**. The callback location of the app to authorize.  |
 | `code_challenge_method` | `string` | **Required**. The hash method used to generate the challenge. |
 | `code_challenge`        | `string` | **Required**. The code challenge used for PKCE.               |
+| `state`                 | `string` | **Required**. A random string used to prevent CSRF attacks.   |
 
 ### Example Request
 
@@ -24,7 +25,8 @@ Generate an authorization code (you should create a code verifier and code chall
   "response_type": "code",
   "redirect_uri": "myapp://callback",
   "code_challenge_method": "S256",
-  "code_challenge": "qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es"
+  "code_challenge": "qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es",
+  "state": "ahg84hek2n"
 }
 ```
 
