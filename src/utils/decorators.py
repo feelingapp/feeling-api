@@ -53,18 +53,19 @@ def validate(schema):
             event = args[0]
 
             # Convert body from string to JSON
-            try:
-                event["body"] = json.loads(event["body"])
-            except:
-                return {
-                    "statusCode": 400,
-                    "body": {
-                        "errors": {
-                            "type": "invalid-body",
-                            "message": "The request body is not valid JSON",
-                        }
-                    },
-                }
+            if isinstance(event["body"], str):
+                try:
+                    event["body"] = json.loads(event["body"])
+                except:
+                    return {
+                        "statusCode": 400,
+                        "body": {
+                            "errors": {
+                                "type": "invalid-body",
+                                "message": "The request body is not valid JSON",
+                            }
+                        },
+                    }
 
             # Create JSON schema validator
             validator = Draft4Validator(schema)
