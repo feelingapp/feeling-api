@@ -21,7 +21,6 @@ database = create_engine(database_url)
 Base.metadata.create_all(database)
 
 
-
 # Create a Session
 Session = sessionmaker(bind=database)
 session = Session()
@@ -46,7 +45,9 @@ if len(sys.argv) > 1 and sys.argv[1] == "--generate-data":
             user.verified = mock_user["verified"]
             session.add(user)
 
-
+    # Add a testing client
+    client = Client("feeling-android", "feeling://callback")
+    session.add(client)
 
 # Finish and close session
 session.commit()
