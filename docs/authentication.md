@@ -138,7 +138,6 @@ Generate an access token from an authorization code or refresh token.
 | Parameter       | Type     | Description                                                                                                                |
 | --------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `grant_type`    | `string` | **Required**. Will always be either `authorization_code` or `refresh_token`.                                               |
-| `redirect_uri`  | `string` | **Required**. The callback location of the app to authorize.                                                               |
 | `code`          | `string` | **Required if `grant_type` is `authorization_code`.** The authorization code.                                              |
 | `refresh_token` | `string` | **Required if `grant_type` is `refresh_token`.** The `refresh_token`.                                                      |
 | `code_verifier` | `string` | **Required if `grant_type` is `authorization_code`.** The PKCE code verifier that your app generated before authorization. |
@@ -149,7 +148,6 @@ Generate an access token from an authorization code or refresh token.
 ```json
 {
   "grant_type": "authorization_code",
-  "redirect_uri": "myapp://callback",
   "client_id": "0oabygpxgk9lXaMgF0h7",
   "code": "CKA9Utz2GkWlsrmnqehz",
   "code_verifier": "M25iVXpKU3puUjFaYWg3T1NDTDQtcW1ROUY5YXlwalNoc0hhakxifmZHag",
@@ -162,7 +160,6 @@ Generate an access token from an authorization code or refresh token.
 ```json
 {
   "grant_type": "refresh_token",
-  "redirect_uri": "myapp://callback",
   "refresh_token": "abOhb[...]Owvg",
   "state": "ahg84hek2n"
 }
