@@ -56,7 +56,6 @@ class RefreshToken(BaseModel):
     def generate_token(self):
         """Generates a random string of length TOKEN_LENGTH"""
 
-        # TODO: check whether this should be changed to a UUID or whether to be replaced with something different
         return "".join(
             secrets.choice(string.ascii_letters + string.digits)
             for _ in range(self.TOKEN_LENGTH)
@@ -76,7 +75,7 @@ class RefreshToken(BaseModel):
 
     @staticmethod
     def hash_token(unhashed_token):
-        """Hashes a token with SHA256"""
+        """Hashes a token with SHA-256"""
 
         return sha256(unhashed_token.encode()).hexdigest()
 
