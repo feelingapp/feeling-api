@@ -72,7 +72,7 @@ def sign_in(event, context, session, register=False):
                 "errors": [
                     {
                         "type": "invalid_code_challenge_method",
-                        "message": "Only SHA256 is supported for the code challenge method",
+                        "message": "Only SHA-256 is supported for the code challenge method",
                     }
                 ]
             },

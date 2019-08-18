@@ -66,7 +66,6 @@ def authorization_code_grant(event, session):
 
     code = body["code"]
     code_verifier = body["code_verifier"]
-    redirect_uri = body["redirect_uri"]
     client_id = body["client_id"]
 
     authorization_code = session.query(AuthorizationCode).filter_by(code=code).first()
@@ -92,19 +91,6 @@ def authorization_code_grant(event, session):
                     {
                         "type": "invalid_client_id",
                         "message": "The client ID is not invalid",
-                    }
-                ]
-            },
-        }
-
-    if not redirect_uri == authorization_code.client.redirect_uri:
-        return {
-            "statusCode": 401,
-            "body": {
-                "errors": [
-                    {
-                        "type": "invalid_redirect_uri",
-                        "message": "The redirect URI is not invalid",
                     }
                 ]
             },
