@@ -141,7 +141,6 @@ Generate an access token from an authorization code or refresh token.
 | `code`          | `string` | **Required if `grant_type` is `authorization_code`.** The authorization code.                                              |
 | `refresh_token` | `string` | **Required if `grant_type` is `refresh_token`.** The `refresh_token`.                                                      |
 | `code_verifier` | `string` | **Required if `grant_type` is `authorization_code`.** The PKCE code verifier that your app generated before authorization. |
-| `state`         | `string` | **Required**. A 10 character length string used to prevent CSRF attacks.                                                   |
 
 ### Example Request (Authorization Code Grant Type)
 
@@ -151,7 +150,6 @@ Generate an access token from an authorization code or refresh token.
   "client_id": "0oabygpxgk9lXaMgF0h7",
   "code": "CKA9Utz2GkWlsrmnqehz",
   "code_verifier": "M25iVXpKU3puUjFaYWg3T1NDTDQtcW1ROUY5YXlwalNoc0hhakxifmZHag",
-  "state": "ahg84hek2n"
 }
 ```
 
@@ -161,7 +159,6 @@ Generate an access token from an authorization code or refresh token.
 {
   "grant_type": "refresh_token",
   "refresh_token": "abOhb[...]Owvg",
-  "state": "ahg84hek2n"
 }
 ```
 
@@ -173,7 +170,6 @@ Generate an access token from an authorization code or refresh token.
   "expires_in": 3600,
   "token_type": "Bearer",
   "refresh_token": "abOhb[...]Owvg",
-  "state": "ahg84hek2n"
 }
 ```
 
