@@ -17,7 +17,6 @@ schema = {
 
 
 @database
-@token_required
 @validate(schema)
 def exists(event, context, session):
     # Search for a user with a verified email
