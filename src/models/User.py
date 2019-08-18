@@ -34,6 +34,18 @@ class User(BaseModel):
         except VerifyMismatchError:
             return False
 
+    def toJson(self):
+        # Password not included in output for to security reasons
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "verified": self.verified,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
     def __repr__(self):
         return "<User(id='{}', first_name='{}', last_name='{}', email='{}', password_hash='{}', verified='{}', created_at='{}', updated_at='{}')>".format(
             self.id,
