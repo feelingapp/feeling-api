@@ -26,7 +26,10 @@ def getAll(event, context, session):
     user_id = event["user_id"]
     feelings = session.query(Feeling).filter_by(user_id=user_id).all()
 
-    return {"statusCode": 200, "body": [feeling.toJson() for feeling in feelings]}
+    return {
+        "statusCode": 200,
+        "body": {"feelings": [feeling.toJson() for feeling in feelings]},
+    }
 
 
 @database
