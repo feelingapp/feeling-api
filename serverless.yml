@@ -121,3 +121,11 @@ functions:
           path: /account/exists
           method: get
           cors: true
+
+  account_me:
+    handler: src/functions/account.me
+    events:
+      - http:
+          path: /account/me
+          method: get
+          cors: true
