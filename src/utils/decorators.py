@@ -52,11 +52,15 @@ def validate(schema):
         def wrap_function(*args):
             event = args[0]
 
+            content_type = event["headers"].get("Content-Type")
+
+            if not content_type:
+                return {"statusCode": 400}
+
+            media_type = content_type.split(";")[0]
+
             # Convert body from string to JSON
-            if (
-                type(event["body"]) == str
-                and event["headers"].get("Content-Type") == "application/json"
-            ):
+            if isinstance(event["body"], str) and media_type == "application/json":
                 event["body"] = json.loads(event["body"])
 
             # Create JSON schema validator
