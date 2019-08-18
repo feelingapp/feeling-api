@@ -51,10 +51,9 @@ authorization_code_grant_schema = {
             "properties": {
                 "code": {"type": "string"},
                 "code_verifier": {"type": "string"},
-                "redirect_uri": {"type": "string"},
                 "client_id": {"type": "string"},
             },
-            "required": ["grant_type", "code_verifier", "redirect_uri", "client_id"],
+            "required": ["grant_type", "code_verifier", "client_id"],
         }
     },
 }
