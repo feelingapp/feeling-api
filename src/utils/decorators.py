@@ -52,16 +52,19 @@ def validate(schema):
         def wrap_function(*args):
             event = args[0]
 
-            content_type = event["headers"].get("Content-Type")
-
-            if not content_type:
-                return {"statusCode": 400}
-
-            media_type = content_type.split(";")[0]
-
             # Convert body from string to JSON
-            if isinstance(event["body"], str) and media_type == "application/json":
+            try:
                 event["body"] = json.loads(event["body"])
+            except:
+                return {
+                    "statusCode": 400,
+                    "body": {
+                        "errors": {
+                            "type": "invalid-body",
+                            "message": "The request body is not valid JSON",
+                        }
+                    },
+                }
 
             # Create JSON schema validator
             validator = Draft4Validator(schema)
