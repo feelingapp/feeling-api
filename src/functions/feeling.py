@@ -22,6 +22,18 @@ schema = {
 
 @database
 @token_required
+def getAll(event, context, session):
+    user_id = event["user_id"]
+    feelings = session.query(Feeling).filter_by(user_id=user_id).all()
+
+    return {
+        "statusCode": 200,
+        "body": {"feelings": [feeling.toJson() for feeling in feelings]},
+    }
+
+
+@database
+@token_required
 def get(event, context, session):
     feeling_id = event["pathParameters"]["id"]
     user_id = event["user_id"]
