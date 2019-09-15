@@ -51,4 +51,4 @@ def me(event, context, session):
             },
         }
 
-    return {"statusCode": 200, "body": {"user": user.toJson()}}
+    return {"statusCode": 200, "body": user.toJson()}
