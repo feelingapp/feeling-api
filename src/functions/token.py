@@ -113,7 +113,8 @@ def authorization_code_grant(event, session):
         user_id=authorization_code.user_id, client_id=authorization_code.client_id
     ).delete()
 
-    access_token = AccessToken(authorization_code.user_id)
+    access_token = AccessToken()
+    access_token.create(authorization_code.user_id)
 
     refresh_token = RefreshToken(
         authorization_code.user_id, authorization_code.client_id
@@ -234,7 +235,8 @@ def refresh_token_grant(event, session):
 
     session.delete(db_refresh_token)
 
-    access_token = AccessToken(db_refresh_token.user_id)
+    access_token = AccessToken()
+    access_token.create(db_refresh_token.user_id)
     refresh_token = RefreshToken(db_refresh_token.user_id, db_refresh_token.client_id)
     session.add(refresh_token)
     session.commit()
