@@ -122,18 +122,18 @@ functions:
           method: post
           cors: true
 
-  account_exists:
-    handler: src/functions/account.exists
+  user_exists:
+    handler: src/functions/user.exists
     events:
       - http:
-          path: /account/exists
+          path: /user/exists
           method: get
           cors: true
 
-  account_me:
-    handler: src/functions/account.me
+  user_me:
+    handler: src/functions/user.me
     events:
       - http:
-          path: /account/me
+          path: /user/me
           method: get
           cors: true

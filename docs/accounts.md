@@ -1,13 +1,13 @@
-# Accounts
+# Users
 
-## Check if an Account Exists
+## Check if a User Exists
 
-An account is created if one does not exist.
+Searches if a user exists given an email
 
-`GET /account/exists`
+`GET /user/exists`
 
 **Note:** As this is a GET request, all parameters should be sent as query parameters in the URL.
 
-| Parameter | Type     | Description                                                   |
-| --------- | -------- | ------------------------------------------------------------- |
-| `email`   | `string` | **Required**. The email needed to check if an account exists. |
+| Parameter | Type     | Description                                               |
+| --------- | -------- | --------------------------------------------------------- |
+| `email`   | `string` | **Required**. The email needed to check if a user exists. |
