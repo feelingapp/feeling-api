@@ -104,7 +104,7 @@ def token_required(function):
             token = authorization.split("Bearer ")[1]
             access_token = AccessToken(token)
 
-            if access_token.has_expired:
+            if access_token.has_expired():
                 return {
                     "statusCode": 401,
                     "body": {
@@ -119,10 +119,10 @@ def token_required(function):
 
             # Add user ID to event argument
             user_id = access_token.payload["sub"]
-            new_event = {**event, "user_id": user_id}
-            args = (new_event, *args[1:])
+            event["user_id"] = user_id
 
             # Call function
+            args = (event, *args[1:])
             return function(*args)
 
         return {"statusCode": 401}
