@@ -37,13 +37,13 @@ class User(BaseModel):
     def toJson(self):
         # Password not included in output for to security reasons
         return {
-            "id": self.id,
+            "id": str(self.id),
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
             "verified": self.verified,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            "created_at": str(self.created_at),
+            "updated_at": str(self.updated_at),
         }
 
     def __repr__(self):
