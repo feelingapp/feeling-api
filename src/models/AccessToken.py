@@ -24,7 +24,10 @@ class AccessToken:
         return self.TOKEN_LIFE
 
     def has_expired(self):
-        return self.payload["exp"] + self.TOKEN_LIFE < time.time()
+        try:
+            return self.payload["exp"] + self.TOKEN_LIFE < time.time()
+        except jwt.ExpiredSignatureError:
+            return True
 
     @property
     def payload(self):
