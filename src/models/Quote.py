@@ -22,6 +22,7 @@ class Quote(BaseModel):
 
     def toJson(self):
         return {
+            "id": self.id,
             "quote": self.quote,
             "author": self.author,
             "emotion": self.emotion.name,

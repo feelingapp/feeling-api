@@ -28,7 +28,10 @@ def get(event, context, session):
     if not settings:
         return {"statusCode": 404}
 
-    return {"statusCode": 200, "body": json.loads(settings.settings)}
+    settingsJson = json.loads(settings.settings)
+    settingsJson["id"] = settings.id
+
+    return {"statusCode": 200, "body": settingsJson}
 
 
 @database
