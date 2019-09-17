@@ -10,6 +10,7 @@ Settings are stored in the database for syncing between multiple devices.
 
 ```json
 {
+  "id": "b6aff5e1-e777-4485-b932-b62a6905d062",
   "daily_reminder": {
     "enabled": true,
     "hour": 20,
