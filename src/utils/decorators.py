@@ -96,9 +96,13 @@ def token_required(function):
 
     def wrap_function(*args):
         event = args[0]
-        headers = event["headers"]
 
-        authorization = headers.get("Authorization")
+        # Headers should be case-insensitive so make them lower case
+        headers = dict(
+            (header.lower(), value) for header, value in event["headers"].items()
+        )
+
+        authorization = headers.get("authorization")
 
         if authorization:
             token = authorization.split("Bearer ")[1]
