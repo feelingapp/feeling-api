@@ -15,7 +15,7 @@ npm run start-database
 2. Install JavaScript libraries:
 
 ```bash
-npm install -g serverless
+npm install -g serverless@1.52.0
 npm install
 ```
 
@@ -36,7 +36,6 @@ python3 -m venv venv
 .\venv\scripts\activate.bat
 pip install -r requirements.txt
 ```
-
 
 4. Generate the database tables:
 
